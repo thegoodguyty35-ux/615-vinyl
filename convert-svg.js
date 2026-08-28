@@ -1,16 +1,16 @@
-export default async function handler(request) {
+export default function handler(request, response) {
   if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "POST required" }), { status: 405, headers: { "content-type": "application/json" } });
+    return response.status(405).json({ error: "POST required" });
   }
 
-  const body = await request.json().catch(() => null);
+  const body = request.body;
   if (!body || !body.imageDataUrl) {
-    return new Response(JSON.stringify({ error: "imageDataUrl is required" }), { status: 400, headers: { "content-type": "application/json" } });
+    return response.status(400).json({ error: "imageDataUrl is required" });
   }
 
-  return new Response(JSON.stringify({
+  return response.status(200).json({
     status: "preview-only",
     message: "Connect a trusted image-tracing provider here for production SVG conversion.",
     inputType: body.imageDataUrl.startsWith("data:image/") ? "data-url" : "unknown"
-  }), { status: 200, headers: { "content-type": "application/json" } });
+  });
 }

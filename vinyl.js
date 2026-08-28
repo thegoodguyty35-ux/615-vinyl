@@ -83,7 +83,7 @@ function setup() {
     checkoutBtn.addEventListener("click", () => { 
       if (!cart.length) return; 
       const lines = cart.map(item => `${item.name} (${item.size}, ${item.finish}) x${item.quantity}`).join("%0D%0A"); 
-      window.location.href = `mailto:615vinyl@example.com?subject=615 Vinyl order request&body=${lines}%0D%0A%0D%0ATotal before final quote: ${document.getElementById("cart-total").textContent}`; 
+      window.location.href = `mailto:clarkone@gmail.com?subject=615 Vinyl order request&body=${lines}%0D%0A%0D%0ATotal before final quote: ${document.getElementById("cart-total").textContent}`; 
     }); 
   }
 
@@ -94,7 +94,7 @@ function setup() {
       const path = document.getElementById("order-path").value; 
       const text = document.getElementById("custom-text").value || "uploaded artwork"; 
       const subject = path === "business" ? "615 Vinyl business quote" : "615 Vinyl custom quote"; 
-      window.location.href = `mailto:615vinyl@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Idea: ${text}\nCategory: ${document.getElementById("custom-category").value}\nSize: ${document.getElementById("custom-size").value}\nFinish: ${document.getElementById("custom-finish").value}`)}`; 
+      window.location.href = `mailto:clarkone@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Idea: ${text}\nCategory: ${document.getElementById("custom-category").value}\nSize: ${document.getElementById("custom-size").value}\nFinish: ${document.getElementById("custom-finish").value}`)}`; 
     }); 
   }
 

@@ -34,5 +34,76 @@ function openCart() { document.getElementById("cart-drawer").classList.add("open
 function closeCart() { document.getElementById("cart-drawer").classList.remove("open"); document.getElementById("drawer-backdrop").classList.remove("open"); document.getElementById("cart-drawer").setAttribute("aria-hidden", "true"); }
 function renderEvents() { document.getElementById("event-list").innerHTML = events.map(event => `<article class="event-card"><div class="event-date"><small>${event.month}</small>${event.day}</div><div><h3>${event.name}</h3><p>${event.place}</p><time>${event.time}</time></div><a class="button button-dark" href="${event.map}" target="_blank" rel="noreferrer">Directions</a></article>`).join(""); document.getElementById("next-event-name").textContent = `${events[0].name} / ${events[0].place}`; document.getElementById("event-map-link").href = events[0].map; }
 function setupUpload() { document.getElementById("image-upload").addEventListener("change", event => { const file = event.target.files[0]; if (!file) return; const image = new Image(); image.onload = () => { const canvas = document.getElementById("image-preview"); const context = canvas.getContext("2d"); context.clearRect(0, 0, canvas.width, canvas.height); const scale = Math.min(canvas.width / image.width, canvas.height / image.height); const width = image.width * scale; const height = image.height * scale; const x = (canvas.width - width) / 2; const y = (canvas.height - height) / 2; context.drawImage(image, x, y, width, height); const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${image.width} ${image.height}"><image href="${image.src}" width="${image.width}" height="${image.height}" preserveAspectRatio="xMidYMid meet"/></svg>`; const download = document.getElementById("svg-download"); download.href = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`; download.hidden = false; document.getElementById("custom-status").textContent = "SVG preview ready. Final vector tracing and cleanup can be reviewed with your quote."; }; image.src = URL.createObjectURL(file); }); }
-function setup() { renderProducts(); renderEvents(); renderCart(); setupUpload(); document.querySelectorAll(".collection-tab").forEach(button => button.addEventListener("click", () => { activeCollection = button.dataset.collection; document.querySelectorAll(".collection-tab").forEach(item => item.classList.toggle("active", item === button)); renderProducts(); })); document.getElementById("menu-toggle").addEventListener("click", () => { const nav = document.getElementById("site-nav"); nav.classList.toggle("open"); document.getElementById("menu-toggle").setAttribute("aria-expanded", nav.classList.contains("open")); }); document.getElementById("cart-open").addEventListener("click", openCart); document.getElementById("cart-close").addEventListener("click", closeCart); document.getElementById("drawer-backdrop").addEventListener("click", closeCart); document.getElementById("dialog-close").addEventListener("click", () => document.getElementById("product-dialog").close()); document.getElementById("checkout-button").addEventListener("click", () => { if (!cart.length) return; const lines = cart.map(item => `${item.name} (${item.size}, ${item.finish}) x${item.quantity}`).join("%0D%0A"); window.location.href = `mailto:615vinyl@example.com?subject=615 Vinyl order request&body=${lines}%0D%0A%0D%0ATotal before final quote: ${document.getElementById("cart-total").textContent}`; }); document.getElementById("custom-form").addEventListener("submit", event => { event.preventDefault(); const path = document.getElementById("order-path").value; const text = document.getElementById("custom-text").value || "uploaded artwork"; const subject = path === "business" ? "615 Vinyl business quote" : "615 Vinyl custom quote"; window.location.href = `mailto:615vinyl@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Idea: ${text}\nCategory: ${document.getElementById("custom-category").value}\nSize: ${document.getElementById("custom-size").value}\nFinish: ${document.getElementById("custom-finish").value}`)}`; }); document.getElementById("qr-code").src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.href.split("#")[0])}`; }
+function setup() { 
+  // 1. Initial renders
+  renderProducts(); 
+  renderEvents(); 
+  renderCart(); 
+  setupUpload(); 
+
+  // 2. Fixed collection tab tracking layout
+  document.querySelectorAll(".collection-tabs button, [data-collection]").forEach(button => {
+    button.addEventListener("click", (e) => {
+      // Manage visual highlight on buttons
+      document.querySelectorAll(".collection-tabs button").forEach(btn => btn.classList.remove("selected", "active"));
+      e.target.classList.add("selected", "active");
+      
+      // Update data state and redraw matching vinyl cards
+      activeCollection = e.target.dataset.collection || "all";
+      renderProducts(); 
+    });
+  });
+
+  // 3. Keep mobile menu toggles running cleanly
+  const menuBtn = document.getElementById("menu-toggle");
+  if (menuBtn) {
+    menuBtn.addEventListener("click", () => { 
+      const nav = document.getElementById("site-nav"); 
+      nav.classList.toggle("open"); 
+      menuBtn.setAttribute("aria-expanded", nav.classList.contains("open")); 
+    }); 
+  }
+
+  // 4. Cart modal toggles
+  const cartOpenBtn = document.getElementById("cart-open");
+  if (cartOpenBtn) cartOpenBtn.addEventListener("click", openCart);
+  
+  const cartCloseBtn = document.getElementById("cart-close");
+  if (cartCloseBtn) cartCloseBtn.addEventListener("click", closeCart);
+  
+  const backdrop = document.getElementById("drawer-backdrop");
+  if (backdrop) backdrop.addEventListener("click", closeCart);
+  
+  const dialogCloseBtn = document.getElementById("dialog-close");
+  if (dialogCloseBtn) dialogCloseBtn.addEventListener("click", () => document.getElementById("product-dialog").close());
+
+  // 5. Checkout email processing handlers
+  const checkoutBtn = document.getElementById("checkout-button");
+  if (checkoutBtn) {
+    checkoutBtn.addEventListener("click", () => { 
+      if (!cart.length) return; 
+      const lines = cart.map(item => `${item.name} (${item.size}, ${item.finish}) x${item.quantity}`).join("%0D%0A"); 
+      window.location.href = `mailto:615vinyl@example.com?subject=615 Vinyl order request&body=${lines}%0D%0A%0D%0ATotal before final quote: ${document.getElementById("cart-total").textContent}`; 
+    }); 
+  }
+
+  const customForm = document.getElementById("custom-form");
+  if (customForm) {
+    customForm.addEventListener("submit", event => { 
+      event.preventDefault(); 
+      const path = document.getElementById("order-path").value; 
+      const text = document.getElementById("custom-text").value || "uploaded artwork"; 
+      const subject = path === "business" ? "615 Vinyl business quote" : "615 Vinyl custom quote"; 
+      window.location.href = `mailto:615vinyl@example.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`Idea: ${text}\nCategory: ${document.getElementById("custom-category").value}\nSize: ${document.getElementById("custom-size").value}\nFinish: ${document.getElementById("custom-finish").value}`)}`; 
+    }); 
+  }
+
+  // 6. Dynamic Live QR Code generator tracking the active production link
+  const qrImg = document.getElementById("qr-code");
+  if (qrImg) {
+    qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.href.split("#")[0])}`; 
+  }
+}
+
 document.addEventListener("DOMContentLoaded", setup);
+

@@ -1,17 +1,17 @@
-export default async function handler(request) {
+export default function handler(request, response) {
   if (request.method !== "POST") {
-    return new Response(JSON.stringify({ error: "POST required" }), { status: 405, headers: { "content-type": "application/json" } });
+    return response.status(405).json({ error: "POST required" });
   }
 
-  const body = await request.json().catch(() => null);
+  const body = request.body;
   const phrase = typeof body?.phrase === "string" ? body.phrase.trim() : "";
   if (!phrase) {
-    return new Response(JSON.stringify({ error: "phrase is required" }), { status: 400, headers: { "content-type": "application/json" } });
+    return response.status(400).json({ error: "phrase is required" });
   }
 
-  return new Response(JSON.stringify({
+  return response.status(200).json({
     status: "review-needed",
     phrase,
     message: "This is not a legal clearance. Connect a trademark and copyright search provider before production use."
-  }), { status: 200, headers: { "content-type": "application/json" } });
+  });
 }

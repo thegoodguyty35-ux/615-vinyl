@@ -1,11 +1,1 @@
-{
-  "rewrites": [
-    { "source": "/vinyl.css", "destination": "/static/vinyl.css" },
-    { "source": "/vinyl.js", "destination": "/static/vinyl.js" }
-  ],
-  "functions": {
-    "api/*.js": {
-      "maxDuration": 10
-    }
-  }
-}
+{}

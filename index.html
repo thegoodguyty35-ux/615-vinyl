@@ -22,6 +22,7 @@
             <a href="#collections">Collections</a>
             <a href="#custom">Custom Studio</a>
             <a href="#events">Events</a>
+            <a href="#trivia">Trivia</a>
             <button class="cart-button" id="cart-open" type="button" title="Open cart">Cart <span id="cart-count">0</span></button>
         </nav>
     </header>
@@ -32,55 +33,181 @@
                 <p class="kicker">Small-batch decals from Nashville to your front door</p>
                 <h1>Make it yours.<br><em>Stick with joy.</em></h1>
                 <p class="hero-text">Personal decals, business labels, and crafty little treasures made with care by Christine.</p>
-                <div class="button-row"><a class="button button-dark" href="#collections">Shop the collections</a><a class="text-link" href="#custom">Start a custom order <span>&rarr;</span></a></div>
+                <div class="button-row">
+                    <a class="button button-dark" href="#collections">Shop the collections</a>
+                    <a class="text-link" href="#custom">Start a custom order <span>&rarr;</span></a>
+                </div>
             </div>
             <div class="hero-art" aria-label="Decorative vinyl decal preview">
-                <div class="sun-disc"></div><div class="hero-sticker">made<br><span>with</span><br>heart</div>
+                <div class="sun-disc"></div>
+                <div class="hero-sticker">made<br><span>with</span><br>heart</div>
                 <div class="hero-caption">615 / handmade in small batches</div>
             </div>
         </section>
 
-        <section class="ticker" aria-label="Shop highlights"><span>Weather-ready vinyl</span><i>&bull;</i><span>Small orders welcome</span><i>&bull;</i><span>Business bundles available</span><i>&bull;</i><span>Made in Tennessee</span></section>
+        <section class="ticker" aria-label="Shop highlights">
+            <span>Weather-ready vinyl</span><i>&bull;</i>
+            <span>Small orders welcome</span><i>&bull;</i>
+            <span>Business bundles available</span><i>&bull;</i>
+            <span>Made in Tennessee</span>
+        </section>
 
         <section id="collections" class="section-shell content-section">
-            <div class="section-heading"><div><p class="kicker">Find your little favorite</p><h2>Shop the collections</h2></div><p class="muted">Every umbrella has a place to land:<br>cars, cups, gifts, and everything between.</p></div>
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">Find your little favorite</p>
+                    <h2>Shop the collections</h2>
+                </div>
+                <p class="muted">Every umbrella has a place to land:<br>cars, cups, gifts, and everything between.</p>
+            </div>
             <div class="collection-tabs" role="tablist" aria-label="Vinyl collections">
-                <button class="collection-tab active" data-collection="all" role="tab">All umbrellas</button><button class="collection-tab" data-collection="coastal" role="tab">Coastal</button><button class="collection-tab" data-collection="garden" role="tab">Garden</button><button class="collection-tab" data-collection="midnight" role="tab">Midnight</button>
+                <button class="collection-tab active" data-collection="all" role="tab">All umbrellas</button>
+                <button class="collection-tab" data-collection="coastal" role="tab">Coastal</button>
+                <button class="collection-tab" data-collection="garden" role="tab">Garden</button>
+                <button class="collection-tab" data-collection="midnight" role="tab">Midnight</button>
             </div>
             <div id="product-grid" class="product-grid" aria-live="polite"></div>
         </section>
 
         <section id="custom" class="custom-section">
             <div class="section-shell custom-layout">
-                <div><p class="kicker">The Custom Studio</p><h2>Your idea,<br><em>in vinyl.</em></h2><p>Bring a logo, phrase, number, or sketch. Choose a personal decal or a business bundle and we will turn your idea into a clean, cut-ready preview.</p><a class="button button-light" href="#custom-form">Build your decal</a></div>
+                <div>
+                    <p class="kicker">The Custom Studio</p>
+                    <h2>Your idea,<br><em>in vinyl.</em></h2>
+                    <p>Bring a logo, phrase, number, or sketch. Choose a personal decal or a business bundle and we will turn your idea into a clean, cut-ready preview.</p>
+                    <a class="button button-light" href="#custom-form">Build your decal</a>
+                </div>
                 <form id="custom-form" class="custom-form">
-                    <div class="form-top"><span class="step-number">01</span><div><strong>Tell us what you are making</strong><small>We will reply with a quote before anything is cut.</small></div></div>
-                    <label>Order path<select id="order-path"><option value="personal">Personal project</option><option value="business">Business / bulk order</option></select></label>
-                    <label>What kind of umbrella?<select id="custom-category"><option value="text">Text</option><option value="image">Image / logo</option><option value="number">Number</option></select></label>
-                    <label>Your idea<input id="custom-text" type="text" placeholder="e.g. Christine's Garden Club"></label>
-                    <label>Upload an image or logo<input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp"></label>
+                    <div class="form-top">
+                        <span class="step-number">01</span>
+                        <div>
+                            <strong>Tell us what you are making</strong>
+                            <small>We will reply with a quote before anything is cut.</small>
+                        </div>
+                    </div>
+                    <label>Order path
+                        <select id="order-path">
+                            <option value="personal">Personal project</option>
+                            <option value="business">Business / bulk order</option>
+                        </select>
+                    </label>
+                    <label>What kind of umbrella?
+                        <select id="custom-category">
+                            <option value="text">Text</option>
+                            <option value="image">Image / logo</option>
+                            <option value="number">Number</option>
+                        </select>
+                    </label>
+                    <label>Your idea
+                        <input id="custom-text" type="text" placeholder="e.g. Christine's Garden Club">
+                    </label>
+                    <label>Upload an image or logo
+                        <input id="image-upload" type="file" accept="image/png,image/jpeg,image/webp">
+                    </label>
                     <canvas id="image-preview" width="480" height="260" aria-label="Uploaded decal preview"></canvas>
-                       <a id="svg-download" class="text-link" hidden download="615-vinyl-preview.svg">Download SVG preview <span>&darr;</span></a>
-                    <div class="form-row"><label>Size<select id="custom-size"><option value="small">Small - up to 3 in</option><option value="medium">Medium - up to 6 in</option><option value="large">Large - up to 10 in</option></select></label><label>Finish<select id="custom-finish"><option value="matte">Matte</option><option value="gloss">Gloss +$1</option><option value="holographic">Holographic +$3</option></select></label></div>
-                    <button class="button button-dark" type="submit">Request a quote <span>&rarr;</span></button><p class="form-note" id="custom-status" role="status">Image preview is processed in your browser.</p>
+                    <a id="svg-download" class="text-link" hidden download="615-vinyl-preview.svg">Download SVG preview <span>&darr;</span></a>
+                    <div class="form-row">
+                        <label>Size
+                            <select id="custom-size">
+                                <option value="small">Small - up to 3 in</option>
+                                <option value="medium">Medium - up to 6 in</option>
+                                <option value="large">Large - up to 10 in</option>
+                            </select>
+                        </label>
+                        <label>Finish
+                            <select id="custom-finish">
+                                <option value="matte">Matte</option>
+                                <option value="gloss">Gloss +$1</option>
+                                <option value="holographic">Holographic +$3</option>
+                            </select>
+                        </label>
+                    </div>
+                    <button class="button button-dark" type="submit">Request a quote <span>&rarr;</span></button>
+                    <p class="form-note" id="custom-status" role="status">Image preview is processed in your browser.</p>
                 </form>
             </div>
         </section>
 
         <section id="events" class="section-shell content-section events-section">
-            <div class="section-heading"><div><p class="kicker">Come say hello</p><h2>Find us in the wild</h2></div><a class="text-link" href="https://www.google.com/maps" target="_blank" rel="noreferrer">Open maps <span>&nearr;</span></a></div>
-            <div class="event-layout"><div id="event-list" class="event-list"></div><div class="map-placeholder"><div class="map-pin">615</div><strong>Next booth stop</strong><span id="next-event-name">Loading event...</span><a id="event-map-link" class="button button-light" target="_blank" rel="noreferrer">Get directions</a></div></div>
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">Come say hello</p>
+                    <h2>Find us in the wild</h2>
+                </div>
+                <a class="text-link" href="https://www.google.com/maps" target="_blank" rel="noreferrer">Open maps <span>&nearr;</span></a>
+            </div>
+            <div class="event-layout">
+                <div id="event-list" class="event-list"></div>
+                <div class="map-placeholder">
+                    <div class="map-pin">615</div>
+                    <strong>Next booth stop</strong>
+                    <span id="next-event-name">Loading event...</span>
+                    <a id="event-map-link" class="button button-light" target="_blank" rel="noreferrer">Get directions</a>
+                </div>
+            </div>
         </section>
 
-        <section class="qr-section section-shell"><div><p class="kicker">Take us with you</p><h2>Scan. Shop. Share.</h2><p class="muted">Put this code on your booth sign, thank-you card, or market table.</p></div><div class="qr-frame"><img id="qr-code" alt="QR code linking to the 615 Vinyl homepage"><small>615VINYL.COM</small></div></section>
+        <section id="trivia" class="section-shell content-section trivia-section">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">Fun little pause</p>
+                    <h2>Spin & win</h2>
+                </div>
+            </div>
+            <div class="trivia-layout">
+                <div class="wheel-wrap">
+                    <div id="wheel" class="wheel">
+                        <div class="wheel-center">615</div>
+                    </div>
+                    <button id="spin-wheel" class="button button-dark" type="button">Spin the wheel</button>
+                </div>
+                <div class="trivia-card">
+                    <p class="small-label">Trivia prompt</p>
+                    <h3 id="trivia-question">Ready for a quick win?</h3>
+                    <p id="trivia-result">Answer the next question for a chance to earn a free sticker or a raffle entry.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="qr-section section-shell">
+            <div>
+                <p class="kicker">Take us with you</p>
+                <h2>Scan. Shop. Share.</h2>
+                <p class="muted">Put this code on your booth sign, thank-you card, or market table.</p>
+            </div>
+            <div class="qr-frame">
+                <img id="qr-code" alt="QR code linking to the 615 Vinyl homepage">
+                <small>615VINYL.COM</small>
+            </div>
+        </section>
     </main>
 
-    <footer class="site-footer"><span>&copy; 2026 615 Vinyl & Knittin' with My Kitten</span><span>Made for people who like their things personal.</span><a href="mailto:clarkone@gmail.com">Email Christine</a></footer>
+    <footer class="site-footer">
+        <span>&copy; 2026 615 Vinyl & Knittin' with My Kitten</span>
+        <span>Made for people who like their things personal.</span>
+        <a href="mailto:clarkone@gmail.com">Email Christine</a>
+    </footer>
 
-    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true" aria-labelledby="cart-title"><div class="drawer-header"><h2 id="cart-title">Your cart</h2><button id="cart-close" class="close-button" type="button" title="Close cart">&times;</button></div><div id="cart-items" class="cart-items"></div><div class="cart-footer"><div><span>Subtotal</span><strong id="cart-total">$0.00</strong></div><p id="discount-note">Add 10+ decals for bundle pricing.</p><button id="checkout-button" class="button button-dark" type="button">Send order request</button></div></aside>
+    <aside id="cart-drawer" class="cart-drawer" aria-hidden="true" aria-labelledby="cart-title">
+        <div class="drawer-header">
+            <h2 id="cart-title">Your cart</h2>
+            <button id="cart-close" class="close-button" type="button" title="Close cart">&times;</button>
+        </div>
+        <div id="cart-items" class="cart-items"></div>
+        <div class="cart-footer">
+            <div>
+                <span>Subtotal</span>
+                <strong id="cart-total">$0.00</strong>
+            </div>
+            <p id="discount-note">Add 10+ decals for bundle pricing.</p>
+            <button id="checkout-button" class="button button-dark" type="button">Send order request</button>
+        </div>
+    </aside>
     <div id="drawer-backdrop" class="drawer-backdrop"></div>
-    <dialog id="product-dialog" class="product-dialog"><button id="dialog-close" class="close-button" type="button" title="Close product">&times;</button><div id="dialog-content"></div></dialog>
+    <dialog id="product-dialog" class="product-dialog">
+        <button id="dialog-close" class="close-button" type="button" title="Close product">&times;</button>
+        <div id="dialog-content"></div>
+    </dialog>
     <script src="./vinyl.js" defer></script>
 </body>
 </html>
-

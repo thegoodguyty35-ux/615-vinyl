@@ -1,0 +1,10904 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dollar Tree ASM Assistant</title>
+
+
+    <style>
+
+        /* ===============================
+           GLOBAL APP STYLES
+        =============================== */
+
+        body {
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                sans-serif;
+
+            background-color: #f4f7f6;
+
+            color: #333;
+
+            margin: 0;
+
+            padding: 15px;
+
+            display: flex;
+
+            justify-content: center;
+
+        }
+
+
+        /* ===============================
+           MAIN APP CONTAINER
+        =============================== */
+
+        .app-container {
+
+            width: 100%;
+
+            max-width: 480px;
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 4px 10px rgba(0,0,0,0.05);
+
+        }
+
+
+        h1 {
+
+            color: #007a48;
+
+            font-size: 20px;
+
+            text-align: center;
+
+            margin-top: 0;
+
+        }
+
+
+
+        /* ===============================
+           NAVIGATION MENU
+        =============================== */
+
+        .menu-grid {
+
+            display: grid;
+
+            grid-template-columns: 1fr;
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        button {
+
+            background-color: #007a48;
+
+            color: white;
+
+            border: none;
+
+            padding: 12px;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            text-align: left;
+
+        }
+
+
+        button:active {
+
+            background-color: #005432;
+
+        }
+
+
+
+        /* ===============================
+           ACTIVE SCREEN DISPLAY
+        =============================== */
+
+        .screen-box {
+
+            background:white;
+
+            border:1px solid #ddd;
+
+            border-radius:8px;
+
+            padding:15px;
+
+            margin-bottom:15px;
+
+        }
+
+
+        .dashboard-card {
+
+            background:#f7f7f7;
+
+            padding:12px;
+
+            border-radius:6px;
+
+            margin-top:10px;
+
+        }
+        .progress-container {
+        
+            background:#ddd;
+        
+            border-radius:10px;
+        
+            height:14px;
+        
+            width:100%;
+        
+            overflow:hidden;
+        
+            margin-top:10px;
+        
+        }
+        
+        
+        
+        .progress-bar {
+        
+            height:100%;
+        
+            border-radius:10px;
+        
+            background:#007a48;
+        
+            transition:width 0.3s ease;
+        
+        }
+        
+        
+        
+        .status-good {
+        
+            color:#007a48;
+        
+            font-weight:bold;
+        
+        }
+        
+        
+        
+        .status-warning {
+        
+            color:#d68b00;
+        
+            font-weight:bold;
+        
+        }
+        
+        
+        
+        .status-alert {
+        
+            color:#cc0000;
+        
+            font-weight:bold;
+        
+        }
+        
+
+
+
+        /* ===============================
+           TOOL CONSOLE
+        =============================== */
+
+        .console-box {
+
+            background:#1e1e1e;
+
+            color:#39ff14;
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            padding:15px;
+
+            border-radius:8px;
+
+            min-height:200px;
+
+            white-space:pre-wrap;
+
+            font-size:13px;
+
+            box-shadow:
+                inset 0 2px 5px rgba(0,0,0,0.5);
+
+            line-height:1.4;
+
+        }
+
+
+
+        /* ===============================
+           INPUT AREA
+        =============================== */
+
+        .input-area {
+
+            display:flex;
+
+            gap:5px;
+
+            margin-top:10px;
+
+        }
+
+
+        input {
+
+            flex:1;
+
+            padding:10px;
+
+            border:1px solid #ccc;
+
+            border-radius:4px;
+
+            font-size:14px;
+
+            background:#fff;
+
+            color:#000;
+
+        }
+
+
+        .send-btn {
+
+            background-color:#333;
+
+            width:auto;
+
+            padding:0 15px;
+
+            text-align:center;
+
+        }
+
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+
+<div class="app-container">
+
+
+    <!-- ===============================
+         APPLICATION TITLE
+    =============================== -->
+
+
+    <h1>
+        🌳 Dollar Tree ASM Assistant (#6228)
+    </h1>
+
+
+
+
+    <!-- ===============================
+         MAIN NAVIGATION
+    =============================== -->
+
+
+    <div class="menu-grid">
+
+
+        <button onclick="showScreen('dashboard')">
+
+            🏠 Dashboard
+
+        </button>
+        
+
+        <button onclick="showScreen('history')">
+
+            📚 Shift History
+
+        </button>
+
+
+
+        <button onclick="showScreen('opening')">
+
+            🌅 Opening Checklist
+
+        </button>
+
+
+
+        <button onclick="showScreen('closing')">
+
+            🌙 Closing Checklist
+
+        </button>
+
+
+
+        <button onclick="showScreen('tasks')">
+
+            ✅ Daily Tasks
+
+        </button>
+        
+
+        
+        <button onclick="showScreen('sales')">
+            
+            💰 Sales Dashboard
+            
+        </button>
+
+
+        
+        <button onclick="showScreen('truck')">
+
+            🚚 Truck Operations
+
+        </button>
+
+
+
+        <button onclick="showScreen('notes')">
+
+            📝 Daily Notes
+
+        </button>
+
+
+
+        <button onclick="showScreen('tools')">
+
+            🧰 ASM Tools
+
+        </button>
+        <button onclick="showScreen('handoff')">
+
+            🗣️ Manager Handoff
+
+        </button>
+
+        
+        <button onclick="showScreen('incidents')">
+
+            🚨 Incident Log
+
+        </button>
+
+
+    </div>
+
+
+
+
+
+    <!-- ===============================
+         ACTIVE APPLICATION SCREEN
+    =============================== -->
+
+
+    <hr>
+
+
+    <div id="screen" class="screen-box">
+
+
+        <h2>
+            🏠 Dashboard
+        </h2>
+
+
+        <p>
+            Welcome to Dollar Tree ASM OS
+        </p>
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                Store #6228
+            </strong>
+
+
+            <br>
+
+
+            Status:
+            Ready
+
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- ===============================
+         TOOL TERMINAL
+    =============================== -->
+
+
+    <div class="console-box" id="terminal">
+
+        System Ready. Select an operational module above.
+
+    </div>
+
+
+
+
+
+    <!-- ===============================
+         TOOL INPUT
+    =============================== -->
+
+
+    <div class="input-area">
+
+
+        <input
+            type="text"
+            id="user-input"
+            placeholder="Type parameters here..."
+            onkeypress="handleKey(event)"
+        >
+
+
+
+        <button
+            class="send-btn"
+            onclick="sendInput()"
+        >
+
+            Submit
+
+        </button>
+
+
+    </div>
+
+
+</div>
+    </div>
+
+</div>
+
+<script>
+
+/* ==========================================================
+   DOLLAR TREE ASM ASSISTANT
+   Store #6228
+   Version 0.2
+========================================================== */
+
+
+/* ==========================================================
+   STORE DATA
+========================================================== */
+
+const STORE_MAP = {
+
+    hbc: [
+
+        "shampoo",
+        "conditioner",
+        "body wash",
+        "toothpaste",
+        "oral care",
+        "deodorant",
+        "soap",
+        "lotion",
+        "medicine",
+        "eyewear",
+        "makeup",
+        "bandages"
+
+    ],
+
+    chemical: [
+
+        "bleach",
+        "sprays",
+        "dish soap",
+        "sponges",
+        "trash bags",
+        "laundry detergent",
+        "wipes",
+        "brooms",
+        "mops",
+        "foil",
+        "tissues"
+
+    ],
+
+    grocery: [
+
+        "canned goods",
+        "candy",
+        "peg bag chocolate",
+        "snacks",
+        "drinks",
+        "chips",
+        "cookies",
+        "juice",
+        "soda",
+        "bread",
+        "cereal",
+        "condiments"
+
+    ],
+
+    party: [
+
+        "balloons",
+        "gift bags",
+        "plates",
+        "streamers",
+        "cards",
+        "ribbon",
+        "tablecloths",
+        "bows",
+        "catering",
+        "invitations"
+
+    ],
+
+    variety: [
+
+        "kitchenware",
+        "textiles",
+        "home decor",
+        "books",
+        "apparel",
+        "stationery",
+        "craft supplies",
+        "hardware",
+        "tools",
+        "automotive"
+
+    ],
+
+    seasonal: [
+
+        "toys",
+        "lawn and garden",
+        "floral",
+        "electronics",
+        "batteries",
+        "halloween",
+        "christmas",
+        "easter",
+        "summer toys",
+        "back to school"
+
+    ],
+
+    pet_supplies: [
+
+        "dog food",
+        "cat food",
+        "pet treats",
+        "pet toys",
+        "leashes",
+        "bowls"
+
+    ]
+
+};
+
+
+/* ==========================================================
+   APPLICATION STATE
+========================================================== */
+
+let activeMode = "MENU";
+
+let currentScreen = "dashboard";
+    /* ==========================================================
+   ASM OPERATING STATE
+========================================================== */
+
+
+const ASM_STATE = {
+
+
+    currentUser:
+    "ASM",
+
+
+    shiftHistory: [],
+
+
+    memory: [],
+
+
+    closeouts: [],
+
+
+    decisions: [],
+
+    decisionResults: [],
+
+    experienceLibrary: [],
+
+    storeBrain: {
+
+        riskLevel:
+        "LOW",
+    
+    
+        priorities:
+        [],
+    
+    
+        predictions:
+        [],
+    
+    
+        recommendations:
+        [],
+    
+    
+        lastAnalysis:
+        null
+    
+    },
+
+    cashDecisions: [],
+
+    patterns: [],
+
+/* ==========================================================
+   CASH OFFICE ENGINE
+========================================================== */
+
+
+    cashOffice: {
+    
+    
+        registers: [],
+    
+    
+        safe: {
+    
+    
+            openingAmount: 0,
+    
+    
+            currentAmount: 0
+    
+    
+        },
+    
+    
+        drops: [],
+    
+    
+        pickups: [],
+    
+    
+        loans: [],
+    
+    
+        deposits: [],
+    
+    
+        overShort: 0,
+    
+    
+        safeHistory: [],
+    
+    
+        intelligence: {
+    
+    
+            alerts: [],
+    
+    
+            dailySummary: {},
+    
+    
+            riskLevel: "LOW",
+    
+    
+            lastAnalysis: null
+    
+    
+        },
+    
+    
+        lastUpdated: null
+    
+    
+    },
+
+
+    store: {
+
+
+        number:
+        "6228",
+
+
+        location:
+        "6228 E Broadway Blvd",
+
+
+        city:
+        "Tucson",
+
+
+        state:
+        "AZ"
+
+
+    },
+
+
+    shift: {
+    
+    
+        role:
+        "Assistant Store Manager",
+    
+    
+        currentShift:
+        "Not Set",
+    
+    
+        managerOnDuty:
+        "Not Set",
+    
+    
+        status:
+        "CLOSED",
+    
+    
+        openedAt:
+        null,
+    
+    
+        closedAt:
+        null,
+    
+    
+        openedBy:
+        null,
+    
+    
+        closedBy:
+        null,
+    
+    
+        receivingManager:
+        null,
+    
+    
+        handoffAccepted:
+        false,
+
+        handoffCreatedAt:
+        null,
+
+        handoffFrom:
+        null
+    
+    
+    },
+
+
+    daily: {
+
+        date: new Date().toLocaleDateString(),
+
+        openingComplete: false,
+
+        closingComplete: false,
+
+        truckProcessed: false,
+
+        recoveryComplete: false
+
+    },
+
+
+tasks: [
+
+    {
+        id: 1,
+
+        name:
+        "Complete daily sales floor walk",
+
+        priority:
+        "HIGH",
+
+        complete:false,
+
+        created:
+        new Date().toLocaleString(),
+
+        completedAt:null
+
+    },
+
+
+    {
+        id: 2,
+
+        name:
+        "Check recovery conditions",
+
+        priority:
+        "MEDIUM",
+
+        complete:false,
+
+        created:
+        new Date().toLocaleString(),
+
+        completedAt:null
+
+    },
+
+
+    {
+        id: 3,
+
+        name:
+        "Review backstock priorities",
+
+        priority:
+        "LOW",
+
+        complete:false,
+
+        created:
+        new Date().toLocaleString(),
+
+        completedAt:null
+
+    }
+
+],
+
+
+notes: [
+
+],
+handoffs: [
+
+],
+
+
+incidents: [
+
+],
+
+
+truck: {
+
+    status: "Not Received",
+
+    truckID: null,
+
+    arrivalTime: null,
+
+    boxes: 0,
+
+    processed: 0,
+
+    remaining: 0,
+
+    completed: false,
+
+    assignedEmployees: [],
+
+    categories: [],
+
+    backstock: 0,
+
+    floorStocked: 0,
+
+    lastUpdated: null,
+
+
+    intelligence: {
+
+        completionPercent: 0,
+
+        riskLevel: "LOW",
+
+        alerts: [],
+
+        recommendations: []
+
+    }
+
+
+},
+
+
+sales: {
+
+    dailyGoal: 8200,
+
+    currentSales: 0,
+
+    transactions: 0,
+
+    averageTicket: 0,
+
+    salesPace: 0,
+
+    lastUpdated: null
+
+},
+
+alerts: [],
+
+
+openingChecklist: [
+
+    {
+        id: 1,
+        task: "Disable alarm / verify store access",
+        complete: false
+    },
+
+
+    {
+        id: 2,
+        task: "Verify cash office and register readiness",
+        complete: false
+    },
+
+
+    {
+        id: 3,
+        task: "Check sales floor recovery condition",
+        complete: false
+    },
+
+
+    {
+        id: 4,
+        task: "Walk aisles for safety hazards",
+        complete: false
+    },
+
+
+    {
+        id: 5,
+        task: "Check restroom condition",
+        complete: false
+    },
+
+
+    {
+        id: 6,
+        task: "Review truck/freight priorities",
+        complete: false
+    }
+
+],
+
+
+closingChecklist: [
+
+    {
+        id: 1,
+        task: "Complete final sales floor recovery",
+        complete: false
+    },
+
+
+    {
+        id: 2,
+        task: "Verify front end/register area is clean",
+        complete: false
+    },
+
+
+    {
+        id: 3,
+        task: "Check fitting/restroom areas",
+        complete: false
+    },
+
+
+    {
+        id: 4,
+        task: "Complete closing safety walk",
+        complete: false
+    },
+
+
+    {
+        id: 5,
+        task: "Verify cash office procedures completed",
+        complete: false
+    },
+
+
+    {
+        id: 6,
+        task: "Prepare manager handoff notes",
+        complete: false
+    }
+
+]
+};
+
+
+/* ==========================================================
+   PROGRESS BAR FUNCTIONS
+========================================================== */
+
+
+function createProgressBar(current,total){
+
+
+    let percent = 0;
+
+
+    if(total > 0){
+
+        percent =
+        Math.round(
+            (current / total) * 100
+        );
+
+    }
+
+
+
+    return `
+
+
+        <div class="progress-container">
+
+
+            <div
+
+                class="progress-bar"
+
+                style="width:${percent}%"
+
+            >
+
+            </div>
+
+
+        </div>
+
+
+
+        <small>
+
+            ${percent}% Complete
+
+        </small>
+
+
+    `;
+
+
+}
+
+
+
+/* ==========================================================
+   SCREEN TEMPLATES
+========================================================== */
+
+/* ==========================================================
+   LOCAL STORAGE SYSTEM
+========================================================== */
+
+
+function saveASMState(){
+
+
+    localStorage.setItem(
+
+        "DT_ASM_STATE",
+
+        JSON.stringify(
+            ASM_STATE
+        )
+
+    );
+
+
+}
+
+function loadASMState(){
+
+
+    const savedState =
+        localStorage.getItem(
+            "DT_ASM_STATE"
+        );
+
+
+
+    if(savedState){
+
+
+        const parsedState =
+            JSON.parse(savedState);
+
+
+
+        Object.assign(
+            ASM_STATE,
+            parsedState
+        );
+
+
+    }
+
+
+}
+
+
+/* ==========================================================
+   OPERATIONAL PRIORITY ENGINE
+========================================================== */
+
+
+function generateOperationalPriorities(){
+
+
+    let priorities = [];
+
+
+
+    const truckBoxes =
+        ASM_STATE.truck.boxes;
+
+
+    const truckProcessed =
+        ASM_STATE.truck.processed;
+
+
+
+    let truckCompletion = 0;
+
+
+
+    if(truckBoxes > 0){
+
+        truckCompletion =
+            Math.round(
+                (truckProcessed / truckBoxes) * 100
+            );
+
+    }
+
+
+
+
+
+    if(
+        ASM_STATE.incidents.length > 0
+    ){
+
+        priorities.push({
+
+            level:"HIGH",
+
+            message:
+            `🚨 ${ASM_STATE.incidents.length} incident(s) require review`
+
+        });
+
+    }
+
+
+
+
+
+    if(
+        truckBoxes > 0
+        &&
+        truckCompletion < 100
+    ){
+
+        priorities.push({
+
+            level:"MEDIUM",
+
+            message:
+            `🚚 Truck processing ${truckCompletion}% complete`
+
+        });
+
+    }
+
+
+
+
+
+    if(
+        ASM_STATE.sales.salesPace < 80
+        &&
+        ASM_STATE.sales.dailyGoal > 0
+    ){
+
+        priorities.push({
+
+            level:"MEDIUM",
+
+            message:
+            `💰 Sales pace below target (${ASM_STATE.sales.salesPace}%)`
+
+        });
+
+    }
+
+
+
+
+
+    const incompleteTasks =
+
+        ASM_STATE.tasks.filter(
+
+            task => !task.complete
+
+        ).length;
+
+
+
+
+    if(
+        incompleteTasks > 0
+    ){
+
+        priorities.push({
+
+            level:"LOW",
+
+            message:
+            `✅ ${incompleteTasks} daily task(s) remaining`
+
+        });
+
+    }
+
+
+
+
+
+    if(
+        priorities.length === 0
+    ){
+
+        priorities.push({
+
+            level:"GOOD",
+
+            message:
+            "🟢 Operations running normally"
+
+        });
+
+    }
+
+
+
+    return priorities;
+
+
+}
+
+
+/* ==========================================================
+   MANAGER ACTION QUEUE ENGINE
+========================================================== */
+
+
+function generateManagerActions(){
+
+
+    let actions = [];
+
+
+
+    const truckBoxes =
+        ASM_STATE.truck.boxes;
+
+
+    const truckProcessed =
+        ASM_STATE.truck.processed;
+
+
+
+    let truckCompletion = 0;
+
+
+
+    if(truckBoxes > 0){
+
+        truckCompletion =
+            Math.round(
+                (truckProcessed / truckBoxes) * 100
+            );
+
+    }
+
+
+
+
+    if(
+        truckBoxes > 0
+        &&
+        truckCompletion < 100
+    ){
+
+        actions.push({
+
+            order:1,
+
+            title:
+            "🚚 Continue freight processing",
+
+            action:
+            `Process remaining ${truckBoxes - truckProcessed} boxes`
+
+        });
+
+    }
+
+
+
+
+    if(
+        ASM_STATE.sales.salesPace < 80
+        &&
+        ASM_STATE.sales.dailyGoal > 0
+    ){
+
+        actions.push({
+
+            order:2,
+
+            title:
+            "💰 Improve sales pace",
+
+            action:
+            "Review sales floor conditions and customer engagement"
+
+        });
+
+    }
+
+
+
+
+    const incompleteTasks =
+
+        ASM_STATE.tasks.filter(
+
+            task => !task.complete
+
+        );
+
+
+
+    if(
+        incompleteTasks.length > 0
+    ){
+
+        actions.push({
+
+            order:3,
+
+            title:
+            "✅ Complete daily ASM tasks",
+
+            action:
+            `${incompleteTasks.length} task(s) remaining`
+
+        });
+
+    }
+
+
+
+
+    if(
+        ASM_STATE.incidents.length > 0
+    ){
+
+        actions.push({
+
+            order:4,
+
+            title:
+            "🚨 Review incidents",
+
+            action:
+            "Follow up on logged operational issues"
+
+        });
+
+    }
+
+
+
+
+    if(
+        actions.length === 0
+    ){
+
+        actions.push({
+
+            order:1,
+
+            title:
+            "🟢 Operations stable",
+
+            action:
+            "No immediate manager actions required"
+
+        });
+
+    }
+
+
+
+    return actions;
+
+
+}
+
+/* ==========================================================
+   PATTERN RECOGNITION ENGINE
+========================================================== */
+
+
+function generateOperationalPatterns(){
+
+
+    let patterns = [];
+
+
+
+    const history =
+        ASM_STATE.shiftHistory;
+
+
+
+    const decisions =
+        ASM_STATE.decisions;
+
+
+
+    if(history.length === 0){
+
+        return patterns;
+
+    }
+
+
+
+    const lowReadinessShifts =
+
+        history.filter(
+
+            shift =>
+            shift.readinessScore < 50
+
+        ).length;
+
+
+
+    if(
+        lowReadinessShifts >= 3
+    ){
+
+        patterns.push({
+
+            category:
+            "READINESS TREND",
+
+
+            priority:
+            "MEDIUM",
+
+
+            pattern:
+
+            "Multiple shifts have recorded below-target readiness.",
+
+
+            recommendation:
+
+            "Review checklist completion consistency."
+
+        });
+
+    }
+
+
+
+
+    const salesRiskCount =
+
+        decisions.filter(
+
+            decision =>
+
+            decision.recommendation
+            .toLowerCase()
+            .includes("sales")
+
+        ).length;
+
+
+
+    if(
+        salesRiskCount >= 2
+    ){
+
+        patterns.push({
+
+            category:
+            "SALES TREND",
+
+
+            priority:
+            "HIGH",
+
+
+            pattern:
+
+            "Sales improvement actions have been required repeatedly.",
+
+
+            recommendation:
+
+            "Analyze floor coverage and customer engagement patterns."
+
+        });
+
+    }
+
+
+
+
+    return patterns;
+
+
+}
+
+
+/* ==========================================================
+   ADAPTIVE RECOMMENDATION ENGINE v2
+========================================================== */
+
+
+function generateAdaptiveRecommendationsV2(){
+
+
+    let recommendations = [];
+
+
+    const experiences =
+        ASM_STATE.experienceLibrary || [];
+
+
+
+    experiences.forEach(
+        experience => {
+
+
+
+            if(
+                experience.category === "SALES"
+                &&
+                ASM_STATE.sales.salesPace < 80
+            ){
+
+
+
+                recommendations.push({
+
+                    priority:
+                    "HIGH",
+
+
+                    category:
+                    "SALES MEMORY",
+
+
+                    problem:
+                    experience.problem,
+
+
+                    recommendation:
+                    experience.successfulAction,
+
+
+                    confidence:
+                    experience.confidence || 0,
+
+
+                    reason:
+
+                    `Previously used ${experience.timesUsed} time(s) with ${experience.confidence}% confidence.`
+
+
+                });
+
+
+            }
+
+
+
+        }
+    );
+
+
+
+    return recommendations;
+
+
+}
+
+/* ==========================================================
+   EXPERIENCE BASED RECOMMENDATIONS
+========================================================== */
+
+
+function generateExperienceRecommendations(){
+
+
+    let recommendations = [];
+
+
+    if(
+        !ASM_STATE.experienceLibrary ||
+        ASM_STATE.experienceLibrary.length === 0
+    ){
+
+        return recommendations;
+
+    }
+
+
+
+    ASM_STATE.experienceLibrary.forEach(
+        item => {
+
+
+            if(item.confidence >= 60){
+
+
+                recommendations.push({
+
+
+                    id:
+                    item.id,
+
+
+                    category:
+                    item.category,
+
+
+                    problem:
+                    item.problem,
+
+
+                    recommendation:
+                    item.successfulAction,
+
+
+                    confidence:
+                    item.confidence,
+
+
+                    timesUsed:
+                    item.timesUsed,
+
+
+                    reason:
+                    "Previously successful action used "
+                    +
+                    item.timesUsed
+                    +
+                    " time(s) with "
+                    +
+                    item.confidence
+                    +
+                    "% confidence.",
+
+
+                    feedbackStatus:
+                    "PENDING"
+
+
+                });
+
+
+            }
+
+
+        }
+    );
+
+
+
+    recommendations.sort(
+        (a,b)=>
+        b.confidence - a.confidence
+    );
+
+
+
+    return recommendations;
+
+
+}
+
+
+/* ==========================================================
+   EXPERIENCE FEEDBACK CONTROLLER
+========================================================== */
+
+
+function submitExperienceFeedback(
+    experienceID,
+    result
+){
+
+
+    let experience =
+        ASM_STATE.experienceLibrary.find(
+            item =>
+            item.id === experienceID
+        );
+
+
+
+    if(!experience){
+
+        return;
+
+    }
+
+
+
+    experience.feedbackCount =
+        (experience.feedbackCount || 0) + 1;
+
+
+
+    experience.lastFeedback =
+        new Date().toLocaleString();
+
+
+
+    if(result === "SUCCESS"){
+
+
+        experience.timesUsed += 1;
+
+
+        experience.confidence += 5;
+
+
+
+        if(
+            experience.confidence > 100
+        ){
+
+            experience.confidence = 100;
+
+        }
+
+
+        experience.effectiveness =
+            "POSITIVE";
+
+
+    }
+
+
+
+    if(result === "FAILED"){
+
+
+        experience.confidence -= 10;
+
+
+
+        if(
+            experience.confidence < 0
+        ){
+
+            experience.confidence = 0;
+
+        }
+
+
+
+        experience.effectiveness =
+            "NEGATIVE";
+
+
+    }
+
+
+
+    saveASMState();
+
+
+    showScreen("dashboard");
+
+
+}
+
+/* ==========================================================
+   DECISION OUTCOME LEARNING ENGINE
+========================================================== */
+
+
+function evaluateDecisionOutcomes(){
+
+
+    let results = [];
+
+
+
+    ASM_STATE.decisions.forEach(
+
+        decision => {
+
+
+
+            let readinessBefore =
+                decision.readinessBefore || 0;
+
+
+
+            let readinessAfter =
+                decision.readinessAfter || 0;
+
+
+
+            let salesBefore =
+                decision.salesBefore || 0;
+
+
+
+            let salesAfter =
+                decision.salesAfter || 0;
+
+
+
+            let readinessChange =
+                readinessAfter - readinessBefore;
+
+
+
+            let salesChange =
+                salesAfter - salesBefore;
+
+
+
+            let effectiveness =
+                "NEUTRAL";
+
+
+
+            if(
+                readinessChange > 0
+                ||
+                salesChange > 0
+            ){
+
+                effectiveness =
+                "POSITIVE";
+
+            }
+
+
+
+            if(
+                readinessChange < 0
+                &&
+                salesChange < 0
+            ){
+
+                effectiveness =
+                "NEGATIVE";
+
+            }
+
+
+
+            results.push({
+
+                id:
+                decision.id,
+
+
+                action:
+                decision.action,
+
+
+                effectiveness:
+                effectiveness,
+
+
+                readinessChange:
+                readinessChange,
+
+
+                salesChange:
+                salesChange
+
+
+
+            });
+
+
+
+        }
+
+    );
+
+
+
+    ASM_STATE.decisionResults =
+        results;
+
+
+
+    saveASMState();
+
+
+
+    return results;
+
+
+}
+
+/* ==========================================================
+   EXPERIENCE LEARNING ENGINE
+========================================================== */
+
+
+function learnFromDecisionOutcomes(){
+
+
+    const results =
+        ASM_STATE.decisionResults || [];
+
+
+
+    results.forEach(result => {
+
+
+
+        const decision =
+            ASM_STATE.decisions.find(
+                d => d.id === result.id
+            );
+
+
+
+        if(!decision){
+            return;
+        }
+
+
+
+        let effectiveness =
+            result.effectiveness;
+
+
+
+        if(effectiveness === "POSITIVE"){
+
+
+
+            const existing =
+                ASM_STATE.experienceLibrary.find(
+                    item =>
+                    item.problem === decision.recommendation
+                );
+
+
+
+            if(existing){
+
+
+                existing.timesUsed += 1;
+
+
+                existing.confidence =
+                    Math.min(
+                        95,
+                        existing.confidence + 5
+                    );
+
+
+            }
+
+
+            else{
+
+
+                ASM_STATE.experienceLibrary.push(
+                {
+
+                    id:
+                    Date.now(),
+
+
+                    category:
+                    "OPERATIONS",
+
+
+                    problem:
+                    decision.recommendation,
+
+
+                    successfulAction:
+                    decision.action,
+
+
+                    effectiveness:
+                    "POSITIVE",
+
+
+                    timesUsed:
+                    1,
+
+
+                    confidence:
+                    60
+
+
+                });
+
+
+            }
+
+
+        }
+
+
+    });
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.experienceLibrary;
+
+
+}
+/* ==========================================================
+   SHIFT INTELLIGENCE ENGINE
+========================================================== */
+
+
+function generateShiftIntelligence(){
+
+
+    let insights = [];
+
+
+
+    const hour =
+        new Date().getHours();
+
+
+
+    const salesPace =
+        ASM_STATE.sales.salesPace;
+
+
+
+    const truckBoxes =
+        ASM_STATE.truck.boxes;
+
+
+    const truckProcessed =
+        ASM_STATE.truck.processed;
+
+
+
+    let truckCompletion = 0;
+
+
+
+    if(truckBoxes > 0){
+
+        truckCompletion =
+            Math.round(
+                (truckProcessed / truckBoxes) * 100
+            );
+
+    }
+
+
+
+
+
+    /*
+       SALES ANALYSIS
+    */
+
+
+    if(
+        salesPace < 80
+        &&
+        ASM_STATE.sales.dailyGoal > 0
+    ){
+
+        insights.push({
+
+            type:
+            "SALES",
+
+            message:
+            "Sales pace is below target. Focus on floor conditions, customer engagement, and recovery."
+
+        });
+
+    }
+
+
+
+
+
+    /*
+       TRUCK ANALYSIS
+    */
+
+
+    if(
+        truckBoxes > 0
+        &&
+        truckCompletion < 100
+    ){
+
+        insights.push({
+
+            type:
+            "FREIGHT",
+
+            message:
+            `Freight completion is ${truckCompletion}%. Continue processing priorities.`
+
+        });
+
+    }
+
+
+
+
+
+    /*
+       TASK ANALYSIS
+    */
+
+
+    const remainingTasks =
+
+        ASM_STATE.tasks.filter(
+
+            task => !task.complete
+
+        ).length;
+
+
+
+
+    if(
+        remainingTasks > 0
+    ){
+
+        insights.push({
+
+            type:
+            "TASKS",
+
+            message:
+            `${remainingTasks} ASM task(s) remain incomplete.`
+
+        });
+
+    }
+
+
+
+
+
+    /*
+       TIME AWARENESS
+    */
+
+
+    if(
+        hour >= 17
+    ){
+
+        insights.push({
+
+            type:
+            "SHIFT",
+
+            message:
+            "Evening shift detected. Begin preparing closing priorities."
+
+        });
+
+    }
+
+
+
+    if(
+        hour < 10
+    ){
+
+        insights.push({
+
+            type:
+            "SHIFT",
+
+            message:
+            "Opening period detected. Prioritize readiness and customer experience."
+
+        });
+
+    }
+
+
+
+
+
+    if(
+        insights.length === 0
+    ){
+
+        insights.push({
+
+            type:
+            "STATUS",
+
+            message:
+            "Operations appear balanced."
+
+        });
+
+    }
+
+
+
+    return insights;
+
+
+}
+
+
+/* ==========================================================
+   SHIFT PHASE ENGINE
+========================================================== */
+
+
+function getCurrentShiftPhase(){
+
+
+    const hour =
+        new Date().getHours();
+
+
+
+    if(hour < 12){
+
+        return "🌅 Opening";
+
+    }
+
+
+    if(hour < 17){
+
+        return "☀️ Mid Shift";
+
+    }
+
+
+    return "🌙 Closing";
+
+
+}
+
+
+/* ==========================================================
+   SHIFT MEMORY ENGINE
+========================================================== */
+
+
+function generateShiftMemory(){
+
+
+    let memory = [];
+
+
+
+    const phase =
+        getCurrentShiftPhase();
+
+
+
+    memory.push({
+
+        type:
+        "SHIFT",
+
+        message:
+        `Current phase: ${phase}`
+
+    });
+
+
+
+
+    if(
+        ASM_STATE.notes.length > 0
+    ){
+
+        memory.push({
+
+            type:
+            "NOTES",
+
+            message:
+            `${ASM_STATE.notes.length} manager note(s) recorded`
+
+        });
+
+    }
+
+
+
+
+    if(
+        ASM_STATE.incidents.length > 0
+    ){
+
+        memory.push({
+
+            type:
+            "INCIDENTS",
+
+            message:
+            `${ASM_STATE.incidents.length} incident(s) require awareness`
+
+        });
+
+    }
+
+
+
+
+    if(
+        ASM_STATE.handoffs.length > 0
+    ){
+
+        memory.push({
+
+            type:
+            "HANDOFF",
+
+            message:
+            `${ASM_STATE.handoffs.length} manager handoff item(s) saved`
+
+        });
+
+    }
+
+
+
+
+    return memory;
+
+
+}
+
+
+
+/* ==========================================================
+   SHIFT CLOSEOUT ENGINE
+========================================================== */
+
+
+function generateShiftCloseout(){
+
+
+    const incompleteTasks =
+
+        ASM_STATE.tasks.filter(
+
+            task => !task.complete
+
+        ).length;
+
+
+
+    const truckBoxes =
+        ASM_STATE.truck.boxes;
+
+
+    const truckProcessed =
+        ASM_STATE.truck.processed;
+
+
+
+    let truckStatus =
+        "No truck data";
+
+
+
+    if(truckBoxes > 0){
+
+        truckStatus =
+
+            `${truckProcessed} / ${truckBoxes} boxes processed`;
+
+    }
+
+
+
+
+
+    let summary = {
+
+
+        date:
+        new Date().toLocaleDateString(),
+
+
+        phase:
+        getCurrentShiftPhase(),
+
+
+        sales:
+
+        `${ASM_STATE.sales.currentSales} / ${ASM_STATE.sales.dailyGoal}`,
+
+
+
+        truck:
+
+        truckStatus,
+
+
+
+        notes:
+
+        ASM_STATE.notes.length,
+
+
+
+        incidents:
+
+        ASM_STATE.incidents.length,
+
+
+
+        incompleteTasks:
+
+        incompleteTasks
+
+
+
+    };
+
+
+
+    return summary;
+
+
+}
+
+
+/* ==========================================================
+   AUTOMATIC HANDOFF ENGINE
+========================================================== */
+
+
+function generateAutomaticHandoff(){
+
+
+    let handoff = [];
+
+
+
+    const actions =
+        generateManagerActions();
+
+
+
+    actions.forEach(item => {
+
+
+        handoff.push({
+
+            title:
+            item.title,
+
+
+            action:
+            item.action
+
+        });
+
+
+    });
+
+
+
+    return handoff;
+
+
+}
+
+
+/* ==========================================================
+   READINESS SCORE ENGINE
+========================================================== */
+
+
+function renderCurrentReadinessScore(){
+
+
+    const openingTotal =
+        ASM_STATE.openingChecklist.length;
+
+
+    const openingComplete =
+        ASM_STATE.openingChecklist.filter(
+            item => item.complete
+        ).length;
+
+
+
+    const closingTotal =
+        ASM_STATE.closingChecklist.length;
+
+
+    const closingComplete =
+        ASM_STATE.closingChecklist.filter(
+            item => item.complete
+        ).length;
+
+
+
+    const taskTotal =
+        ASM_STATE.tasks.length;
+
+
+    const taskComplete =
+        ASM_STATE.tasks.filter(
+            task => task.complete
+        ).length;
+
+
+
+    const notesTotal =
+        ASM_STATE.notes.length;
+
+
+
+    const incidentsTotal =
+        ASM_STATE.incidents.length;
+
+
+
+    const salesPace =
+        ASM_STATE.sales.salesPace;
+
+
+
+    const truckBoxes =
+        ASM_STATE.truck.boxes;
+
+
+
+    const truckProcessed =
+        ASM_STATE.truck.processed;
+
+
+
+    let truckCompletion = 0;
+
+
+
+    if(truckBoxes > 0){
+
+        truckCompletion =
+
+            Math.round(
+
+                (truckProcessed / truckBoxes) * 100
+
+            );
+
+    }
+
+
+
+
+    return Math.round(
+
+        (
+
+        (openingComplete / openingTotal) * 25
+
+
+        +
+
+
+        (closingComplete / closingTotal) * 15
+
+
+        +
+
+
+        (taskComplete / taskTotal) * 20
+
+
+        +
+
+
+        (truckCompletion / 100) * 15
+
+
+        +
+
+
+        (salesPace / 100) * 15
+
+
+        +
+
+
+        (notesTotal > 0 ? 5 : 0)
+
+
+        +
+
+
+        (incidentsTotal === 0 ? 5 : 0)
+
+        )
+
+    );
+
+
+}
+
+
+/* ==========================================================
+   SHIFT HISTORY RENDERER
+========================================================== */
+
+
+function renderHistory(){
+
+
+    let historyHTML = "";
+
+
+
+    ASM_STATE.shiftHistory.forEach(item => {
+
+
+        historyHTML += `
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🗓️ ${item.date}
+            </strong>
+
+
+            <br><br>
+
+
+            Opened:
+
+            ${item.openedAt}
+
+
+            <br><br>
+
+
+            Closed:
+
+            ${item.closedAt}
+
+
+            <br><br>
+
+
+            Closed By:
+
+            ${item.closedBy}
+
+
+            <br><br>
+
+
+            Readiness Score:
+
+            ${item.readinessScore}%
+
+
+            <br><br>
+
+
+            Sales:
+
+            ${item.sales}
+
+
+            <br><br>
+
+
+            Truck:
+
+            ${item.truck}
+
+
+            <br><br>
+
+
+            Notes:
+
+            ${item.notes}
+
+
+            <br><br>
+
+
+            Incidents:
+
+            ${item.incidents}
+
+
+            <br><br>
+
+
+            Handoff:
+
+            ${
+                item.handoffAccepted
+                ?
+                "✅ Accepted"
+                :
+                "⏳ Pending"
+            }
+
+
+        </div>
+
+
+        `;
+
+
+    });
+
+
+
+    return `
+
+
+        <h2>
+            📚 Shift History
+        </h2>
+
+
+
+        ${
+            historyHTML ||
+            "No archived shifts."
+        }
+
+
+    `;
+
+
+}
+
+
+/* ==========================================================
+   SHIFT ANALYTICS ENGINE
+========================================================== */
+
+
+function generateShiftAnalytics(){
+
+
+    const history =
+        ASM_STATE.shiftHistory;
+
+
+
+    if(history.length === 0){
+
+        return {
+
+            totalShifts:0,
+
+            averageReadiness:0,
+
+            averageSalesPace:0,
+
+            averageIncidents:0,
+
+            commonIssues:[]
+
+        };
+
+    }
+
+
+
+    const totalShifts =
+        history.length;
+
+
+
+    const averageReadiness = Math.round(
+
+        history.reduce(
+
+            (sum, shift) =>
+            sum + shift.readinessScore,
+
+            0
+
+        )
+
+        /
+
+        totalShifts
+
+    );
+
+
+
+    const averageIncidents = Math.round(
+
+        history.reduce(
+
+            (sum, shift) =>
+            sum + shift.incidents,
+
+            0
+
+        )
+
+        /
+
+        totalShifts
+
+    );
+
+
+
+    const salesPaces = history.map(
+        shift => {
+
+
+            const values =
+                shift.sales.split(" / ");
+
+
+
+            if(
+                Number(values[1]) > 0
+            ){
+
+                return Math.round(
+
+                    (
+
+                    Number(values[0])
+
+                    /
+
+                    Number(values[1])
+
+                    )
+
+                    *
+
+                    100
+
+                );
+
+            }
+
+
+            return 0;
+
+
+        }
+
+    );
+
+
+
+    const averageSalesPace = Math.round(
+
+        salesPaces.reduce(
+
+            (a,b)=>a+b,
+
+            0
+
+        )
+
+        /
+
+        salesPaces.length
+
+    );
+
+
+
+    let commonIssues = [];
+
+
+
+    history.forEach(shift => {
+
+
+        if(
+            shift.incidents > 0
+        ){
+
+            commonIssues.push(
+                "Incidents recorded"
+            );
+
+        }
+
+
+        if(
+            shift.notes > 0
+        ){
+
+            commonIssues.push(
+                "Manager notes created"
+            );
+
+        }
+
+
+    });
+
+
+
+    return {
+
+
+        totalShifts,
+
+        averageReadiness,
+
+        averageSalesPace,
+
+        averageIncidents,
+
+        commonIssues
+
+
+    };
+
+
+}
+
+
+/* ==========================================================
+   AI MANAGER ASSISTANT ENGINE
+========================================================== */
+
+
+function generateManagerAssistant(){
+
+
+    let recommendations = [];
+
+
+
+    const salesPace =
+        ASM_STATE.sales.salesPace;
+
+
+
+    const truck =
+        ASM_STATE.truck;
+
+
+
+    const incompleteTasks =
+
+        ASM_STATE.tasks.filter(
+
+            task => !task.complete
+
+        ).length;
+
+
+
+    const incidents =
+        ASM_STATE.incidents.length;
+
+
+
+    const analytics =
+        generateShiftAnalytics();
+
+
+
+
+    /*
+        SALES INTELLIGENCE
+    */
+
+
+    if(salesPace < 80){
+
+
+        recommendations.push({
+
+
+            type:
+            "SALES",
+
+
+            priority:
+            "HIGH",
+
+
+            message:
+
+            "Sales pace is below target. Increase floor engagement, recovery, and customer interaction."
+
+
+        });
+
+
+    }
+
+
+
+
+    /*
+        FREIGHT INTELLIGENCE
+    */
+
+
+    if(
+        truck.boxes > 0
+        &&
+        truck.processed < truck.boxes
+    ){
+
+
+        const remaining =
+
+            truck.boxes -
+            truck.processed;
+
+
+
+        recommendations.push({
+
+
+            type:
+            "FREIGHT",
+
+
+            priority:
+            "MEDIUM",
+
+
+            message:
+
+            `Freight remaining: ${remaining} boxes. Prioritize processing before shift transition.`
+
+
+        });
+
+
+    }
+
+
+
+
+
+    /*
+        TASK INTELLIGENCE
+    */
+
+
+    if(
+        incompleteTasks > 0
+    ){
+
+
+        recommendations.push({
+
+
+            type:
+            "TASKS",
+
+
+            priority:
+            "LOW",
+
+
+            message:
+
+            `${incompleteTasks} ASM task(s) remain incomplete. Complete before handoff.`
+
+
+        });
+
+
+    }
+
+
+
+
+    /*
+        INCIDENT INTELLIGENCE
+    */
+
+
+    if(
+        incidents > 0
+    ){
+
+
+        recommendations.push({
+
+
+            type:
+            "SAFETY",
+
+
+            priority:
+            "HIGH",
+
+
+            message:
+
+            `${incidents} incident(s) recorded. Review corrective actions before closeout.`
+
+
+        });
+
+
+    }
+
+
+
+
+
+    /*
+        HISTORICAL MEMORY
+    */
+
+
+    if(
+        analytics.totalShifts > 0
+        &&
+        analytics.averageReadiness < 50
+    ){
+
+
+        recommendations.push({
+
+
+            type:
+            "HISTORY",
+
+
+            priority:
+            "MEDIUM",
+
+
+            message:
+
+            "Recent shift history shows below-target readiness. Focus on consistent checklist completion."
+
+
+        });
+
+
+    }
+
+
+
+    return recommendations;
+
+
+}
+
+
+/* ==========================================================
+   EXPERIENCE MEMORY BUILDER
+========================================================== */
+
+
+function buildExperienceLibrary(){
+
+
+    if(
+        !ASM_STATE.decisionResults ||
+        ASM_STATE.decisionResults.length === 0
+    ){
+
+        return [];
+
+    }
+
+
+
+    ASM_STATE.decisionResults.forEach(result => {
+
+
+
+        if(
+            result.effectiveness === "POSITIVE"
+        ){
+
+
+            const exists =
+
+            ASM_STATE.experienceLibrary.some(
+
+                item =>
+                item.id === result.id
+
+            );
+
+
+
+            if(!exists){
+
+
+                ASM_STATE.experienceLibrary.push(
+
+                    {
+
+                        id:
+                        result.id,
+
+
+                        category:
+                        "OPERATIONAL",
+
+
+                        problem:
+                        "Previous shift issue",
+
+
+                        successfulAction:
+                        result.action,
+
+
+                        effectiveness:
+                        result.effectiveness,
+
+
+                        confidence:
+                        25,
+
+
+                        timesUsed:
+                        1,
+
+
+                        createdAt:
+                        new Date().toLocaleString()
+
+
+                    }
+
+                );
+
+
+            }
+
+
+        }
+
+
+    });
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.experienceLibrary;
+
+
+}
+
+
+
+/* ==========================================================
+   EXPERIENCE USAGE TRACKER
+========================================================== */
+
+
+function updateExperienceConfidence(){
+
+
+    ASM_STATE.experienceLibrary.forEach(
+        
+        item => {
+
+
+            item.confidence =
+
+            calculateExperienceConfidence(
+                item
+            );
+
+
+        }
+
+    );
+
+
+    saveASMState();
+
+
+    return ASM_STATE.experienceLibrary;
+
+
+}
+
+
+/* ==========================================================
+   EXPERIENCE CONFIDENCE ENGINE
+========================================================== */
+
+
+function calculateExperienceConfidence(
+    experience
+){
+
+
+    let confidence = 0;
+
+
+
+    if(
+        experience.timesUsed >= 1
+    ){
+
+        confidence += 25;
+
+    }
+
+
+
+    if(
+        experience.timesUsed >= 3
+    ){
+
+        confidence += 25;
+
+    }
+
+
+
+    if(
+        experience.timesUsed >= 5
+    ){
+
+        confidence += 25;
+
+    }
+
+
+
+    if(
+        experience.timesUsed >= 10
+    ){
+
+        confidence += 25;
+
+    }
+
+
+
+    return confidence;
+
+
+}
+
+
+/* ==========================================================
+   CASH OFFICE ENGINE
+========================================================== */
+
+
+function initializeCashOffice(){
+
+
+    if(
+        !ASM_STATE.cashOffice
+    ){
+
+        ASM_STATE.cashOffice = {
+
+
+            registers: [],
+
+
+            safe:{
+                openingAmount:0,
+                currentAmount:0
+            },
+
+
+            drops:[],
+
+
+            pickups:[],
+
+
+            loans:[],
+
+
+            deposits:[],
+
+
+            overShort:0,
+
+
+            lastUpdated:null
+
+
+        };
+
+
+    }
+
+
+    saveASMState();
+
+
+    return ASM_STATE.cashOffice;
+
+
+}
+
+function addRegister(){
+
+    let registerNumber =
+        prompt(
+            "Register number?"
+        );
+
+
+    let amount =
+        Number(
+            prompt(
+                "Starting cash amount?"
+            )
+        );
+
+
+    ASM_STATE.cashOffice.registers.push({
+
+        id:
+        Date.now(),
+
+
+        register:
+        registerNumber,
+
+
+        startingCash:
+        amount,
+
+
+        currentCash:
+        amount,
+
+
+        status:
+        "OPEN"
+
+
+    });
+
+
+    ASM_STATE.cashOffice.lastUpdated =
+        new Date().toLocaleString();
+
+
+    saveASMState();
+
+
+    return ASM_STATE.cashOffice.registers;
+
+
+}
+
+
+
+/* ==========================================================
+   FREIGHT ENGINE
+========================================================== */
+
+
+function initializeFreight(){
+
+
+    if(
+        !ASM_STATE.truck
+    ){
+
+        ASM_STATE.truck = {};
+
+    }
+
+
+
+    ASM_STATE.truck.status =
+        ASM_STATE.truck.status || "Not Received";
+
+
+    ASM_STATE.truck.truckID =
+        ASM_STATE.truck.truckID || null;
+
+
+    ASM_STATE.truck.arrivalTime =
+        ASM_STATE.truck.arrivalTime || null;
+
+
+    ASM_STATE.truck.boxes =
+        ASM_STATE.truck.boxes || 0;
+
+
+    ASM_STATE.truck.processed =
+        ASM_STATE.truck.processed || 0;
+
+
+    ASM_STATE.truck.remaining =
+        ASM_STATE.truck.remaining || 0;
+
+
+    ASM_STATE.truck.completed =
+        ASM_STATE.truck.completed || false;
+
+
+    ASM_STATE.truck.assignedEmployees =
+        ASM_STATE.truck.assignedEmployees || [];
+
+
+    ASM_STATE.truck.categories =
+        ASM_STATE.truck.categories || [];
+
+
+    ASM_STATE.truck.backstock =
+        ASM_STATE.truck.backstock || 0;
+
+
+    ASM_STATE.truck.floorStocked =
+        ASM_STATE.truck.floorStocked || 0;
+
+
+    ASM_STATE.truck.lastUpdated =
+        ASM_STATE.truck.lastUpdated || null;
+
+
+
+    if(
+        !ASM_STATE.truck.intelligence
+    ){
+
+        ASM_STATE.truck.intelligence = {
+
+
+            completionPercent:0,
+
+
+            riskLevel:"LOW",
+
+
+            alerts:[],
+
+
+            recommendations:[]
+
+
+        };
+
+    }
+
+
+
+    saveASMState();
+
+
+    return ASM_STATE.truck;
+
+
+}
+
+
+
+/* ==========================================================
+   TRUCK RECEIVING SYSTEM
+========================================================== */
+
+
+function receiveTruck(){
+
+
+    let truckID =
+        prompt(
+            "Truck ID / Delivery Number?"
+        );
+
+
+
+    let boxes =
+        Number(
+            prompt(
+                "Number of boxes received?"
+            )
+        );
+
+
+
+    ASM_STATE.truck.truckID =
+        truckID;
+
+
+
+    ASM_STATE.truck.arrivalTime =
+        new Date().toLocaleString();
+
+
+
+    ASM_STATE.truck.status =
+        "RECEIVED";
+
+
+
+    ASM_STATE.truck.boxes =
+        boxes;
+
+
+
+    ASM_STATE.truck.processed =
+        0;
+
+
+
+    ASM_STATE.truck.remaining =
+        boxes;
+
+
+
+    ASM_STATE.truck.completed =
+        false;
+
+
+
+    ASM_STATE.truck.lastUpdated =
+        new Date().toLocaleString();
+
+
+
+    updateFreightIntelligence();
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.truck;
+
+
+}
+
+
+
+/* ==========================================================
+   FREIGHT INTELLIGENCE CALCULATOR
+========================================================== */
+
+
+function updateFreightIntelligence(){
+
+
+    let completion = 0;
+
+
+    if(
+        ASM_STATE.truck.boxes > 0
+    ){
+
+        completion =
+        Math.round(
+
+            (
+                ASM_STATE.truck.processed /
+                ASM_STATE.truck.boxes
+
+            )
+            *
+            100
+
+        );
+
+    }
+
+
+
+    ASM_STATE.truck.intelligence.completionPercent =
+        completion;
+
+
+
+    if(
+        completion < 50 &&
+        ASM_STATE.truck.boxes > 0
+    ){
+
+        ASM_STATE.truck.intelligence.riskLevel =
+        "HIGH";
+
+
+        ASM_STATE.truck.intelligence.alerts = [
+
+            {
+
+                type:
+                "FREIGHT_DELAY",
+
+
+                message:
+                "Freight processing below expected completion."
+
+            }
+
+        ];
+
+    }
+
+
+
+    else if(
+        completion < 90
+    ){
+
+        ASM_STATE.truck.intelligence.riskLevel =
+        "MEDIUM";
+
+
+    }
+
+
+        else{
+
+
+        ASM_STATE.truck.intelligence.riskLevel =
+        "LOW";
+
+
+    }
+
+
+
+    /* ======================================================
+       FREIGHT RECOMMENDATION ENGINE
+    ====================================================== */
+
+
+    ASM_STATE.truck.intelligence.recommendations = [];
+
+
+
+    if(
+        completion < 50 &&
+        ASM_STATE.truck.boxes > 0
+    ){
+
+        ASM_STATE.truck.intelligence.recommendations.push(
+
+            "Assign additional labor to freight processing."
+
+        );
+
+    }
+
+
+
+    if(
+        completion >= 50 &&
+        completion < 90
+    ){
+
+        ASM_STATE.truck.intelligence.recommendations.push(
+
+            "Continue freight processing and prioritize sales floor recovery."
+
+        );
+
+    }
+
+
+
+    if(
+        completion >= 90
+    ){
+
+        ASM_STATE.truck.intelligence.recommendations.push(
+
+            "Complete remaining freight and prepare recovery."
+
+        );
+
+    }
+
+
+
+    return ASM_STATE.truck.intelligence;
+
+
+}
+
+
+/* ==========================================================
+   FREIGHT PROCESSING ENGINE
+========================================================== */
+
+
+function processFreight(){
+
+
+    let amount =
+        Number(
+            prompt(
+                "How many boxes processed?"
+            )
+        );
+
+
+
+    if(
+        amount <= 0
+    ){
+
+        return ASM_STATE.truck;
+
+    }
+
+
+
+    ASM_STATE.truck.processed += amount;
+
+
+
+    if(
+        ASM_STATE.truck.processed >
+        ASM_STATE.truck.boxes
+    ){
+
+        ASM_STATE.truck.processed =
+        ASM_STATE.truck.boxes;
+
+    }
+
+
+
+    ASM_STATE.truck.remaining =
+
+        ASM_STATE.truck.boxes
+        -
+        ASM_STATE.truck.processed;
+
+
+
+    if(
+        ASM_STATE.truck.remaining <= 0
+    ){
+
+        ASM_STATE.truck.completed =
+            true;
+
+
+        ASM_STATE.truck.status =
+            "COMPLETE";
+
+    }
+
+
+
+    ASM_STATE.truck.lastUpdated =
+        new Date().toLocaleString();
+
+
+
+    updateFreightIntelligence();
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.truck;
+
+
+}
+
+
+
+/* ==========================================================
+   FREIGHT DECISION MEMORY ENGINE
+========================================================== */
+
+
+function generateFreightDecisionRecommendations(){
+
+
+    let recommendations = [];
+
+
+    if(
+        !ASM_STATE.truck ||
+        !ASM_STATE.truck.intelligence
+    ){
+
+        return recommendations;
+
+    }
+
+
+
+    if(
+        ASM_STATE.truck.remaining > 0 &&
+        ASM_STATE.truck.intelligence.riskLevel === "HIGH"
+    ){
+
+        recommendations.push({
+
+            category:
+            "FREIGHT",
+
+
+            priority:
+            "HIGH",
+
+
+            message:
+            `Freight delay detected: ${ASM_STATE.truck.remaining} boxes remaining.`,
+
+
+            recommendedAction:
+            "Assign additional labor to freight processing.",
+
+
+            source:
+            "FREIGHT INTELLIGENCE"
+
+
+        });
+
+    }
+
+
+
+    else if(
+        ASM_STATE.truck.remaining > 0
+    ){
+
+        recommendations.push({
+
+            category:
+            "FREIGHT",
+
+
+            priority:
+            "MEDIUM",
+
+
+            message:
+            `${ASM_STATE.truck.remaining} boxes remain to process.`,
+
+
+            recommendedAction:
+            "Continue freight processing priorities.",
+
+
+            source:
+            "FREIGHT INTELLIGENCE"
+
+
+        });
+
+    }
+
+
+
+    return recommendations;
+
+
+}
+
+
+
+/* ==========================================================
+   CREATE FREIGHT DECISION MEMORY
+========================================================== */
+
+
+function createFreightDecisionMemory(){
+
+
+    let recommendations =
+        generateFreightDecisionRecommendations();
+
+
+
+    recommendations.forEach(
+        item => {
+
+
+            ASM_STATE.decisions.push({
+
+
+                id:
+                Date.now(),
+
+
+                category:
+                item.category,
+
+
+                recommendation:
+                item.message,
+
+
+                action:
+                item.recommendedAction,
+
+
+                source:
+                item.source,
+
+
+                outcome:
+                "PENDING",
+
+
+                createdAt:
+                new Date().toLocaleString()
+
+
+            });
+
+
+        }
+    );
+
+
+
+    saveASMState();
+
+
+    return ASM_STATE.decisions;
+
+
+}
+
+/* ==========================================================
+   CASH INTELLIGENCE INITIALIZER
+========================================================== */
+
+
+function initializeCashIntelligence(){
+
+
+    if(
+        !ASM_STATE.cashOffice
+    ){
+
+        initializeCashOffice();
+
+    }
+
+
+
+    if(
+        !ASM_STATE.cashOffice.intelligence
+    ){
+
+        ASM_STATE.cashOffice.intelligence = {
+
+
+            alerts: [],
+
+
+            dailySummary: {},
+
+
+            riskLevel:
+            "LOW",
+
+
+            lastAnalysis:
+            null
+
+
+        };
+
+    }
+
+
+
+    saveASMState();
+
+
+    return ASM_STATE.cashOffice.intelligence;
+
+
+}
+
+/* ==========================================================
+   CASH DAILY SUMMARY ENGINE
+========================================================== */
+
+
+function generateCashDailySummary(){
+    
+    initializeCashIntelligence();
+
+    let drops =
+        ASM_STATE.cashOffice.drops.reduce(
+
+            (sum,item)=>
+            sum + item.amount,
+
+            0
+
+        );
+
+
+
+    let deposits =
+        ASM_STATE.cashOffice.deposits.reduce(
+
+            (sum,item)=>
+            sum + item.amount,
+
+            0
+
+        );
+
+
+
+    let pickups =
+        ASM_STATE.cashOffice.pickups.reduce(
+
+            (sum,item)=>
+            sum + item.amount,
+
+            0
+
+        );
+
+
+
+    let summary = {
+
+
+        drops:
+        drops,
+
+
+        deposits:
+        deposits,
+
+
+        pickups:
+        pickups,
+
+
+        safeBalance:
+        ASM_STATE.cashOffice.safe.currentAmount,
+
+
+        overShort:
+        ASM_STATE.cashOffice.overShort,
+
+
+        updated:
+        new Date().toLocaleString()
+
+
+    };
+
+
+
+    ASM_STATE.cashOffice.intelligence.dailySummary =
+        summary;
+
+
+
+    ASM_STATE.cashOffice.intelligence.lastAnalysis =
+        new Date().toLocaleString();
+
+
+
+    saveASMState();
+
+
+
+    return summary;
+
+
+}
+
+
+/* ==========================================================
+   CASH DROP TRACKER
+========================================================== */
+
+
+function recordCashDrop(){
+
+
+    let amount =
+        Number(
+            prompt(
+                "Drop amount?"
+            )
+        );
+
+
+
+    let register =
+        prompt(
+            "Register number?"
+        );
+
+
+
+    let drop = {
+
+
+        id:
+        Date.now(),
+
+
+        register:
+        register,
+
+
+        amount:
+        amount,
+
+
+        time:
+        new Date().toLocaleString(),
+
+
+        employee:
+        ASM_STATE.currentUser
+
+
+    };
+
+
+
+    ASM_STATE.cashOffice.drops.push(
+        drop
+    );
+
+
+
+    updateSafeBalance(
+        amount,
+        "Cash Drop"
+    );
+
+
+
+    ASM_STATE.cashOffice.lastUpdated =
+        new Date().toLocaleString();
+
+
+
+    saveASMState();
+
+
+
+    return drop;
+
+
+}
+
+
+/* ==========================================================
+   CASH OFFICE DECISION MEMORY INTEGRATION
+========================================================== */
+
+
+function createCashDecisionMemory(){
+
+
+    let recommendations =
+        generateCashDecisionRecommendations();
+
+
+
+    if(
+        recommendations.length === 0
+    ){
+
+        return [];
+
+    }
+
+
+
+    let decisions = [];
+
+
+
+    recommendations.forEach(
+        item => {
+
+
+            let decision = {
+
+
+                id:
+                Date.now(),
+
+
+                category:
+                item.category,
+
+
+                recommendation:
+                item.message,
+
+
+                action:
+                item.recommendedAction,
+
+
+                outcome:
+                "PENDING",
+
+
+                source:
+                "CASH OFFICE INTELLIGENCE",
+
+
+                createdAt:
+                new Date().toLocaleString()
+
+
+            };
+
+
+
+            decisions.push(
+                decision
+            );
+
+
+
+            ASM_STATE.decisions.push(
+                decision
+            );
+
+
+        }
+    );
+
+
+
+    saveASMState();
+
+
+
+    return decisions;
+
+
+}
+
+/* ==========================================================
+   DEPOSIT TRACKER
+========================================================== */
+
+
+function recordDeposit(){
+
+
+    let amount =
+        Number(
+            prompt(
+                "Deposit amount?"
+            )
+        );
+
+
+
+    let deposit = {
+
+
+        id:
+        Date.now(),
+
+
+        amount:
+        amount,
+
+
+        date:
+        new Date().toLocaleString(),
+
+
+        employee:
+        ASM_STATE.currentUser
+
+
+    };
+
+
+
+    ASM_STATE.cashOffice.deposits.push(
+        deposit
+    );
+
+
+
+    updateSafeBalance(
+        -amount,
+        "Deposit Removed"
+    );
+
+
+
+    ASM_STATE.cashOffice.lastUpdated =
+        new Date().toLocaleString();
+
+
+
+    saveASMState();
+
+
+
+    return deposit;
+
+
+}
+
+
+function generateCashOfficeSummary(){
+
+
+    let totalDrops =
+        ASM_STATE.cashOffice.drops.reduce(
+            (sum,item)=>
+            sum + item.amount,
+            0
+        );
+
+
+
+    let totalDeposits =
+        ASM_STATE.cashOffice.deposits.reduce(
+            (sum,item)=>
+            sum + item.amount,
+            0
+        );
+
+
+
+    return {
+
+
+        registers:
+        ASM_STATE.cashOffice.registers.length,
+
+
+        drops:
+        totalDrops,
+
+
+        deposits:
+        totalDeposits,
+
+
+        overShort:
+        ASM_STATE.cashOffice.overShort
+
+
+    };
+
+
+}
+
+
+/* ==========================================================
+   CASH PICKUP TRACKER
+========================================================== */
+
+
+function recordCashPickup(){
+
+
+    let amount =
+        Number(
+            prompt(
+                "Pickup amount?"
+            )
+        );
+
+
+
+    ASM_STATE.cashOffice.pickups.push({
+
+        id:
+        Date.now(),
+
+
+        amount:
+        amount,
+
+
+        time:
+        new Date().toLocaleString(),
+
+
+        employee:
+        ASM_STATE.currentUser
+
+
+    });
+
+
+
+    updateSafeBalance(
+        amount,
+        "Cash Pickup Added"
+    );
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.cashOffice.pickups;
+
+
+}
+
+
+/* ==========================================================
+   CASH OFFICE DASHBOARD ENGINE
+========================================================== */
+
+
+function generateCashOfficeDashboard(){
+
+
+    let drops =
+
+        ASM_STATE.cashOffice.drops.reduce(
+
+            (sum,item)=>
+            sum + item.amount,
+
+            0
+
+        );
+
+
+
+    let deposits =
+
+        ASM_STATE.cashOffice.deposits.reduce(
+
+            (sum,item)=>
+            sum + item.amount,
+
+            0
+
+        );
+
+
+
+    return {
+
+
+        registers:
+
+        ASM_STATE.cashOffice.registers.length,
+
+
+
+        drops:
+
+        drops || 0,
+
+
+
+        deposits:
+
+        deposits || 0,
+
+
+
+        overShort:
+
+        ASM_STATE.cashOffice.overShort || 0,
+
+
+
+        safeBalance:
+
+        ASM_STATE.cashOffice.safe.currentAmount || 0,
+
+
+
+        riskLevel:
+
+        ASM_STATE.cashOffice.intelligence
+
+        ?
+
+        ASM_STATE.cashOffice.intelligence.riskLevel
+
+        :
+
+        "LOW",
+
+
+
+        alerts:
+
+        ASM_STATE.cashOffice.intelligence
+
+        ?
+
+        ASM_STATE.cashOffice.intelligence.alerts
+
+        :
+
+        []
+
+
+    };
+
+
+}
+
+
+/* ==========================================================
+   SAFE BALANCE CONTROLLER
+========================================================== */
+
+
+function updateSafeBalance(
+    amount,
+    reason
+){
+
+
+    if(
+        !ASM_STATE.cashOffice
+    ){
+
+        initializeCashOffice();
+
+    }
+
+
+
+    ASM_STATE.cashOffice.safe.currentAmount += amount;
+
+
+
+    ASM_STATE.cashOffice.safeHistory =
+    ASM_STATE.cashOffice.safeHistory || [];
+
+
+
+    ASM_STATE.cashOffice.safeHistory.push({
+
+        id:
+        Date.now(),
+
+
+        amount:
+        amount,
+
+
+        reason:
+        reason,
+
+
+        timestamp:
+        new Date().toLocaleString(),
+
+
+        user:
+        ASM_STATE.currentUser
+
+
+    });
+
+
+
+    ASM_STATE.cashOffice.lastUpdated =
+        new Date().toLocaleString();
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.cashOffice.safe;
+
+}
+
+
+/* ==========================================================
+   CASH VARIANCE ENGINE
+========================================================== */
+
+
+function calculateCashVariance(
+    expected,
+    actual
+){
+
+
+    let variance =
+        actual - expected;
+
+
+
+    ASM_STATE.cashOffice.overShort =
+        variance;
+
+
+
+    saveASMState();
+
+
+
+    return {
+
+
+        expected:
+        expected,
+
+
+        actual:
+        actual,
+
+
+        variance:
+        variance,
+
+
+        status:
+
+        variance === 0
+
+        ?
+
+        "BALANCED"
+
+
+        :
+
+        variance > 0
+
+        ?
+
+        "OVER"
+
+        :
+
+        "SHORT"
+
+
+    };
+
+
+}
+
+
+/* ==========================================================
+   CASH RISK ANALYSIS
+========================================================== */
+
+
+function analyzeCashRisk(){
+
+
+    let alerts = [];
+
+
+    let variance =
+        ASM_STATE.cashOffice.overShort;
+
+
+
+    if(
+        variance < 0
+    ){
+
+        alerts.push({
+
+            type:
+            "OVER_SHORT",
+
+
+            priority:
+            "HIGH",
+
+
+            message:
+            "Cash shortage detected: $" +
+            Math.abs(variance)
+
+        });
+
+
+    }
+
+
+
+    if(
+        ASM_STATE.cashOffice.safe.currentAmount > 5000
+    ){
+
+        alerts.push({
+
+            type:
+            "SAFE_BALANCE",
+
+
+            priority:
+            "MEDIUM",
+
+
+            message:
+            "Safe balance is high. Review cash movement."
+
+        });
+
+
+    }
+
+
+
+    ASM_STATE.cashOffice.intelligence.alerts =
+        alerts;
+
+
+
+    ASM_STATE.cashOffice.intelligence.riskLevel =
+
+
+        alerts.length > 0
+
+        ?
+
+        "HIGH"
+
+        :
+
+        "LOW";
+
+
+
+    saveASMState();
+
+
+
+    return alerts;
+
+
+}
+
+
+/* ==========================================================
+   CASH DECISION MEMORY
+========================================================== */
+
+
+function generateCashDecisionRecommendations(){
+
+
+    let recommendations = [];
+
+
+
+    let alerts =
+        ASM_STATE.cashOffice.intelligence.alerts;
+
+
+
+    alerts.forEach(alert=>{
+
+
+        recommendations.push({
+
+            category:
+            "CASH OFFICE",
+
+
+            priority:
+            alert.priority,
+
+
+            message:
+            alert.message,
+
+
+            recommendedAction:
+
+            alert.type === "OVER_SHORT"
+
+            ?
+
+            "Verify registers, drops, and deposit records."
+
+            :
+
+            "Review safe management procedures."
+
+
+        });
+
+
+    });
+
+
+
+    return recommendations;
+
+
+}
+
+
+/* ==========================================================
+   FREIGHT OUTCOME LEARNING ENGINE
+========================================================== */
+
+
+function learnFromFreightOutcomes(){
+
+
+    if(
+        !ASM_STATE.experienceLibrary
+    ){
+
+        ASM_STATE.experienceLibrary = [];
+
+    }
+
+
+
+    ASM_STATE.decisions.forEach(
+
+        decision => {
+
+
+            if(
+                decision.category === "FREIGHT"
+                &&
+                decision.outcome === "SUCCESS"
+            ){
+
+
+                let existing =
+                    ASM_STATE.experienceLibrary.find(
+
+                        item =>
+
+                        item.id === decision.id
+
+                    );
+
+
+
+                if(
+                    !existing
+                ){
+
+
+                    ASM_STATE.experienceLibrary.push({
+
+
+                        id:
+                        decision.id,
+
+
+                        category:
+                        "FREIGHT",
+
+
+                        problem:
+                        decision.recommendation,
+
+
+                        successfulAction:
+                        decision.action,
+
+
+                        effectiveness:
+                        "POSITIVE",
+
+
+                        timesUsed:
+                        1,
+
+
+                        confidence:
+                        25,
+
+
+                        createdAt:
+                        new Date().toLocaleString()
+
+
+                    });
+
+
+                }
+
+
+            }
+
+
+        }
+
+    );
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.experienceLibrary;
+
+
+}
+
+
+
+/* ==========================================================
+   FREIGHT EXPERIENCE RECOMMENDATION ENGINE
+========================================================== */
+
+
+function generateFreightExperienceRecommendations(){
+
+
+    let recommendations = [];
+
+
+
+    let freightMemory =
+
+        ASM_STATE.experienceLibrary.filter(
+
+            item =>
+
+            item.category === "FREIGHT"
+
+        );
+
+
+
+    freightMemory.forEach(
+
+        item => {
+
+
+            if(
+                item.effectiveness === "POSITIVE"
+            ){
+
+
+                recommendations.push({
+
+
+                    category:
+                    "FREIGHT",
+
+
+                    problem:
+                    item.problem,
+
+
+                    recommendedAction:
+                    item.successfulAction,
+
+
+                    confidence:
+                    item.confidence,
+
+
+                    timesUsed:
+                    item.timesUsed,
+
+
+                    reason:
+
+                    `Previously successful action used ${item.timesUsed} time(s) with ${item.confidence}% confidence.`
+
+
+                });
+
+
+            }
+
+
+        }
+
+    );
+
+
+
+    return recommendations;
+
+
+}
+
+
+
+/* ==========================================================
+   STORE PREDICTIVE OPERATIONS ENGINE
+========================================================== */
+
+
+function analyzeStoreOperations(){
+
+
+    let priorities = [];
+
+    let predictions = [];
+
+    let recommendations = [];
+
+
+
+    /*
+    =========================
+    FREIGHT ANALYSIS
+    =========================
+    */
+
+
+    let freightCompletion =
+
+        ASM_STATE.truck.intelligence
+        ?
+        ASM_STATE.truck.intelligence.completionPercent
+        :
+        0;
+
+
+
+    if(
+
+        freightCompletion < 50
+        &&
+        ASM_STATE.truck.boxes > 0
+
+    ){
+
+
+        priorities.push({
+
+            area:
+            "FREIGHT",
+
+            priority:
+            "HIGH",
+
+            issue:
+            `${ASM_STATE.truck.remaining} boxes remaining`
+
+        });
+
+
+
+        predictions.push({
+
+            risk:
+            "FREIGHT DELAY",
+
+            message:
+            "Freight completion may impact closing readiness."
+
+        });
+
+
+
+        recommendations.push({
+
+            area:
+            "FREIGHT",
+
+            action:
+            "Assign additional labor to freight processing.",
+
+
+            reason:
+            "Historical freight recovery action exists."
+
+        });
+
+
+    }
+
+
+
+    /*
+    =========================
+    SALES ANALYSIS
+    =========================
+    */
+
+
+    if(
+
+        ASM_STATE.sales.salesPace < 80
+
+    ){
+
+
+        priorities.push({
+
+            area:
+            "SALES",
+
+            priority:
+            "HIGH",
+
+            issue:
+            "Sales pace below target"
+
+        });
+
+
+
+        predictions.push({
+
+            risk:
+            "SALES RISK",
+
+            message:
+            "Floor engagement may be required."
+
+        });
+
+
+
+        recommendations.push({
+
+            area:
+            "SALES",
+
+            action:
+            "Increase floor engagement.",
+
+
+            reason:
+            "Previous successful sales action exists."
+
+        });
+
+
+    }
+
+
+
+    /*
+    =========================
+    TASK ANALYSIS
+    =========================
+    */
+
+
+    let incompleteTasks =
+
+        ASM_STATE.tasks.filter(
+
+            task =>
+            !task.complete
+
+        ).length;
+
+
+
+    if(
+
+        incompleteTasks > 0
+
+    ){
+
+
+        priorities.push({
+
+            area:
+            "TASKS",
+
+            priority:
+            "MEDIUM",
+
+            issue:
+            `${incompleteTasks} tasks incomplete`
+
+        });
+
+
+    }
+
+
+
+    /*
+    =========================
+    SAVE STORE BRAIN
+    =========================
+    */
+
+
+    ASM_STATE.storeBrain = {
+
+
+        riskLevel:
+
+        priorities.length >= 3
+
+        ?
+        "HIGH"
+
+        :
+        "MEDIUM",
+
+
+        priorities:
+
+
+        priorities,
+
+
+        predictions:
+
+
+        predictions,
+
+
+        recommendations:
+
+
+        recommendations,
+
+
+        lastAnalysis:
+
+        new Date()
+        .toLocaleString()
+
+    };
+
+
+
+    saveASMState();
+
+
+    return ASM_STATE.storeBrain;
+
+
+}
+
+
+/* ==========================================================
+   CASH OUTCOME LEARNING ENGINE
+========================================================== */
+
+
+function learnFromCashOutcomes(){
+
+
+    if(
+        !ASM_STATE.decisions ||
+        ASM_STATE.decisions.length === 0
+    ){
+
+        return [];
+
+    }
+
+
+
+    ASM_STATE.decisions.forEach(
+
+        decision => {
+
+
+
+            if(
+                decision.category === "CASH OFFICE"
+                &&
+                decision.outcome === "SUCCESS"
+            ){
+
+
+
+                const exists =
+
+                ASM_STATE.experienceLibrary.some(
+
+                    item =>
+                    item.id === decision.id
+
+                );
+
+
+
+                if(!exists){
+
+
+
+                    ASM_STATE.experienceLibrary.push(
+
+                        {
+
+
+                            id:
+                            decision.id,
+
+
+                            category:
+                            "CASH OFFICE",
+
+
+                            problem:
+                            decision.recommendation,
+
+
+                            successfulAction:
+                            decision.action,
+
+
+                            effectiveness:
+                            "POSITIVE",
+
+
+                            confidence:
+                            25,
+
+
+                            timesUsed:
+                            1,
+
+
+                            createdAt:
+                            new Date().toLocaleString()
+
+
+
+                        }
+
+                    );
+
+
+
+                }
+
+
+
+            }
+
+
+
+        }
+
+    );
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.experienceLibrary;
+
+
+}
+
+
+/* ==========================================================
+   CASH EXPERIENCE PREDICTION ENGINE
+========================================================== */
+
+
+function generateCashExperienceRecommendations(){
+
+
+    let recommendations = [];
+
+
+
+    ASM_STATE.experienceLibrary.forEach(
+
+        item => {
+
+
+            if(
+
+                item.category === "CASH OFFICE"
+
+                &&
+
+                item.confidence >= 60
+
+            ){
+
+
+
+                recommendations.push({
+
+
+                    problem:
+                    item.problem,
+
+
+                    recommendation:
+                    item.successfulAction,
+
+
+                    confidence:
+                    item.confidence,
+
+
+                    timesUsed:
+                    item.timesUsed,
+
+
+                    reason:
+                    "Previously successful cash resolution used "
+                    +
+                    item.timesUsed
+                    +
+                    " time(s)."
+
+
+
+                });
+
+
+
+            }
+
+
+
+        }
+
+    );
+
+
+
+    return recommendations;
+
+
+}
+
+
+/* ==========================================================
+   PREDICTIVE SHIFT PLANNING ENGINE
+========================================================== */
+
+
+function generateShiftPredictions(){
+
+
+    let predictions = [];
+
+
+
+    const analytics =
+        generateShiftAnalytics();
+
+
+
+    const incompleteTasks =
+
+        ASM_STATE.tasks.filter(
+
+            task => !task.complete
+
+        ).length;
+
+
+
+    const truckRemaining =
+
+        ASM_STATE.truck.boxes -
+
+        ASM_STATE.truck.processed;
+
+
+
+    /*
+        FREIGHT RISK
+    */
+
+
+    if(truckRemaining > 0){
+
+
+        predictions.push({
+
+
+            category:
+            "FREIGHT RISK",
+
+
+            priority:
+            "MEDIUM",
+
+
+            prediction:
+
+            `${truckRemaining} boxes remain. Freight completion may impact closing readiness.`
+
+
+        });
+
+
+    }
+
+
+
+
+
+    /*
+        SALES RISK
+    */
+
+
+    if(
+        ASM_STATE.sales.salesPace < 80
+    ){
+
+
+        predictions.push({
+
+
+            category:
+            "SALES RISK",
+
+
+            priority:
+            "HIGH",
+
+
+            prediction:
+            "Current sales pace suggests additional floor engagement may be needed.",
+
+            action:
+            "Increase floor engagement and focus on customer interaction."
+
+
+        });
+
+
+    }
+
+
+
+
+
+    /*
+        TASK COMPLETION RISK
+    */
+
+
+    if(
+        incompleteTasks > 0
+    ){
+
+
+        predictions.push({
+
+
+            category:
+            "TASK RISK",
+
+
+            priority:
+            "LOW",
+
+
+            prediction:
+
+            `${incompleteTasks} unfinished task(s) may carry into shift handoff.`,
+
+            action:
+            "Review manager task queue and complete remaining items."
+
+
+        });
+
+
+    }
+
+
+
+
+
+    /*
+        HISTORICAL PATTERN
+    */
+
+
+    if(
+        analytics.totalShifts >= 3
+        &&
+        analytics.averageReadiness < 70
+    ){
+
+
+        predictions.push({
+
+
+            category:
+            "TREND WARNING",
+
+
+            priority:
+            "MEDIUM",
+
+
+            prediction:
+
+            "Multiple recent shifts show readiness challenges."
+
+
+        });
+
+
+    }
+
+
+
+
+
+    return predictions;
+
+
+}
+/* ==========================================================
+   SCREEN RENDER FUNCTIONS
+========================================================== */
+
+
+function renderDashboard(){
+
+    const shiftStatus =
+        ASM_STATE.shift.status;
+
+    const assistant =
+    generateManagerAssistant();
+
+    const predictions =
+    generateShiftPredictions();
+
+    const adaptiveRecommendations =
+    generateAdaptiveRecommendationsV2();
+
+    const cashIntelligence =
+    generateCashOfficeDashboard();
+
+    const patterns =
+    generateOperationalPatterns();
+
+    const analytics =
+    generateShiftAnalytics();
+
+
+    const shiftOpened =
+        ASM_STATE.shift.openedAt;
+
+    
+    const openingTotal =
+        ASM_STATE.openingChecklist.length;
+
+
+    const openingComplete =
+        ASM_STATE.openingChecklist.filter(
+            item => item.complete
+        ).length;
+
+
+    const closingTotal =
+        ASM_STATE.closingChecklist.length;
+
+    
+    const closingComplete =
+        ASM_STATE.closingChecklist.filter(
+            item => item.complete
+        ).length;
+
+
+    const taskTotal =
+        ASM_STATE.tasks.length;
+
+
+    const taskComplete =
+        ASM_STATE.tasks.filter(
+            task => task.complete
+        ).length;
+
+
+    const notesTotal =
+        ASM_STATE.notes.length;
+
+    
+    const handoffsTotal =
+        ASM_STATE.handoffs.length;
+    
+    
+    const incidentsTotal =
+        ASM_STATE.incidents.length;
+    
+    
+    const alertsTotal =
+        ASM_STATE.alerts.length;
+
+    const priorities =
+        generateOperationalPriorities();
+
+    const actions =
+        generateManagerActions();
+
+    const intelligence =
+        generateShiftIntelligence();
+
+    const experienceRecommendations =
+        generateExperienceRecommendations();
+
+    const memory =
+        generateShiftMemory();
+
+    const closeout =
+    generateShiftCloseout();
+
+
+    const handoff =
+    generateAutomaticHandoff();
+
+    const salesGoal =
+        ASM_STATE.sales.dailyGoal;
+
+
+    const currentSales =
+        ASM_STATE.sales.currentSales;
+    
+    
+    const salesPace =
+        ASM_STATE.sales.salesPace;
+    
+    
+    const averageTicket =
+        ASM_STATE.sales.averageTicket;
+
+    const truckBoxes =
+        ASM_STATE.truck.boxes;
+
+
+    const truckProcessed =
+        ASM_STATE.truck.processed;
+    
+    
+    let truckCompletion = 0;
+    
+    
+    if(truckBoxes > 0){
+    
+        truckCompletion =
+            Math.round(
+                (truckProcessed / truckBoxes) * 100
+            );
+    
+    }
+
+
+
+    const readinessScore =
+        renderCurrentReadinessScore();
+
+    const cashOffice =
+    generateCashOfficeDashboard();
+
+
+
+    let status =
+        "🟡 Needs Attention";
+
+
+
+    if(readinessScore >= 80){
+
+        status =
+        "🟢 Operational";
+
+    }
+
+
+
+    if(readinessScore >= 95){
+
+        status =
+        "⭐ Excellent";
+
+    }
+
+
+    let handoffStatus =
+    "⏳ Awaiting Acceptance";
+
+
+    if(
+        ASM_STATE.shift.handoffAccepted
+    ){
+    
+        handoffStatus =
+            "✅ Accepted";
+    
+    }
+
+
+
+    return `
+
+
+        <div class="dashboard-card">
+        
+        
+            <strong>
+                ⏱️ Shift Status
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            Status:
+        
+            ${shiftStatus}
+        
+        
+            <br><br>
+        
+        
+            ${
+                ASM_STATE.shift.status === "ACTIVE"
+            
+                ?
+            
+                "Opened: " + ASM_STATE.shift.openedAt
+            
+            
+                :
+            
+                ASM_STATE.shift.closedAt
+            
+                ?
+            
+                "Closed: " + ASM_STATE.shift.closedAt
+            
+            
+                :
+            
+                "No active shift"
+            
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🚀 Shift Control
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                ASM_STATE.shift.status === "ACTIVE"
+        
+                ?
+        
+                `
+                <button onclick="closeActiveShift()">
+        
+                    Close Shift
+        
+                </button>
+                `
+        
+        
+                :
+        
+                `
+                <button onclick="openShift()">
+        
+                    Open Shift
+        
+                </button>
+                `
+        
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🌅 Opening Checklist
+            </strong>
+
+
+
+            ${createProgressBar(
+                openingComplete,
+                openingTotal
+            )}
+
+
+
+            <br>
+
+
+            ${openingComplete}
+
+            /
+
+            ${openingTotal}
+
+            Complete
+
+
+        </div>
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🌙 Closing Checklist
+            </strong>
+
+
+
+            ${createProgressBar(
+                closingComplete,
+                closingTotal
+            )}
+
+
+
+            <br>
+
+
+            ${closingComplete}
+
+            /
+
+            ${closingTotal}
+
+            Complete
+
+
+        </div>
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                ✅ Daily Tasks
+            </strong>
+
+
+
+            ${createProgressBar(
+                taskComplete,
+                taskTotal
+            )}
+
+
+
+            <br>
+
+
+            ${taskComplete}
+
+            /
+
+            ${taskTotal}
+
+            Complete
+
+
+        </div>
+
+
+
+        <div class="dashboard-card">
+        
+        
+            <strong>
+                📝 Daily Notes
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${notesTotal}
+        
+            Logged
+        
+        
+        </div>
+
+
+
+        <div class="dashboard-card">
+
+            <strong>
+                🗣️ Manager Handoff
+            </strong>
+        
+            <br><br>
+        
+            ${handoffsTotal}
+        
+            Logged
+        
+        </div>
+
+        
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🚨 Incidents
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${incidentsTotal}
+        
+            Logged
+
+
+        </div>
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                ⚠️ Active Alerts
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${alertsTotal}
+        
+            Active
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🎯 Operational Priorities
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                priorities.map(
+                    item => `
+        
+                    <div>
+        
+                        <strong>
+                            ${item.level}
+                        </strong>
+        
+                        <br>
+        
+                        ${item.message}
+        
+                    </div>
+        
+                    <br>
+        
+                    `
+                ).join("")
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                📋 Manager Action Queue
+            </strong>
+        
+        
+            <br><br>
+        
+        
+        
+            ${
+                actions.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.title}
+                        </strong>
+        
+        
+                        <br>
+        
+        
+                        ${item.action}
+        
+        
+                    </div>
+        
+        
+                    <br>
+        
+        
+                    `
+                ).join("")
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🧠 Shift Intelligence
+            </strong>
+
+
+            <br><br>
+
+
+            ${
+                intelligence.map(
+                    item => `
+
+
+                    <div>
+
+
+                        <strong>
+                            ${item.type}
+                        </strong>
+
+
+                        <br><br>
+
+
+                        ${item.message}
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    `
+                ).join("")
+            }
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+        
+            <strong>
+                🤖 Manager Assistant
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                assistant.length > 0
+        
+                ?
+        
+                assistant.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.priority}
+                            -
+                            ${item.type}
+                        </strong>
+        
+        
+                        <br>
+        
+        
+                        ${item.message}
+        
+        
+                    </div>
+        
+        
+                    <br>
+        
+        
+                    `
+                ).join("")
+        
+        
+                :
+        
+                "No recommendations at this time."
+        
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🧬 Adaptive Recommendations
+            </strong>
+
+
+            <br><br>
+
+
+            ${
+                adaptiveRecommendations.length > 0
+
+
+                ?
+
+
+                adaptiveRecommendations.map(
+                    item => `
+
+
+                    <div>
+
+
+                        <strong>
+                            ${item.priority}
+                            -
+                            ${item.category}
+                        </strong>
+
+
+                        <br><br>
+
+
+                        ${item.message}
+
+
+                        <br><br}
+
+
+                        <strong>
+                            Recommended:
+                        </strong>
+
+
+                        <br>
+
+
+                        ${item.recommendation}
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    `
+                ).join("")
+
+
+                :
+
+
+                "No adaptive recommendations available."
+
+
+            }
+
+
+        </div>
+
+
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🧠 Experience Based Recommendations
+            </strong>
+
+
+            <br><br>
+
+
+            ${
+                experienceRecommendations.length > 0
+
+
+                ?
+
+
+                experienceRecommendations.map(
+                    item => `
+
+
+                    <div>
+
+
+                        <strong>
+                            ${item.category}
+                        </strong>
+
+
+                        <br><br>
+
+
+                        Problem:
+
+                        <br>
+
+                        ${item.problem}
+
+
+                        <br><br>
+
+
+                        Recommended Action:
+
+                        <br>
+
+                        ${item.recommendation}
+
+
+                        <br><br>
+
+
+                        Confidence:
+
+                        ${item.confidence}%
+
+
+                        <br>
+
+
+                        Times Used:
+
+                        ${item.timesUsed}
+
+
+                        <br><br>
+
+
+                        ${item.reason}
+
+
+                    </div>
+
+
+                    <hr>
+
+
+                    `
+                ).join("")
+
+
+                :
+
+
+                "No experience memory available."
+
+
+            }
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                📈 Decision Effectiveness Learning
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                ASM_STATE.decisionResults.length > 0
+        
+        
+                ?
+        
+        
+                ASM_STATE.decisionResults.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.effectiveness}
+                        </strong>
+        
+        
+                        <br><br>
+        
+        
+                        Action:
+        
+                        <br>
+        
+                        ${item.action}
+        
+        
+                        <br><br>
+        
+        
+                        Readiness Change:
+        
+                        ${item.readinessChange}
+        
+        
+                        <br>
+        
+        
+                        Sales Change:
+        
+                        ${item.salesChange}
+        
+        
+                    </div>
+        
+        
+                    <hr>
+        
+        
+                    `
+                ).join("")
+        
+        
+                :
+        
+        
+                "No decision outcomes analyzed."
+        
+        
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🧠 Adaptive Manager Memory v2
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                adaptiveRecommendations.length > 0
+        
+        
+                ?
+        
+        
+                adaptiveRecommendations.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.priority}
+                            -
+                            ${item.category}
+                        </strong>
+        
+        
+                        <br><br>
+        
+        
+                        Problem:
+        
+                        <br>
+        
+                        ${item.problem}
+        
+        
+                        <br><br>
+        
+        
+                        Recommended Action:
+        
+                        <br>
+        
+                        ${item.recommendation}
+        
+        
+                        <br><br>
+        
+        
+                        Confidence:
+        
+                        <br>
+        
+                        ${item.confidence}%
+        
+        
+                        <br><br>
+        
+        
+                        Reason:
+        
+                        <br>
+        
+                        ${item.reason}
+        
+        
+                    </div>
+        
+        
+                    <hr>
+        
+        
+                    `
+                ).join("")
+        
+        
+                :
+        
+        
+                "No adaptive recommendations available."
+        
+        
+            }
+        
+        
+        </div>
+        
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🔮 Predictive Shift Planning
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                predictions.length > 0
+        
+                ?
+        
+                predictions.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.priority}
+                            -
+                            ${item.category}
+                        </strong>
+        
+        
+                        <br>
+        
+        
+                        ${item.prediction}
+        
+        
+                    </div>
+        
+        
+                    <br>
+        
+        
+                    `
+                ).join("")
+        
+        
+                :
+        
+                "No operational risks detected."
+        
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🧬 Store Experience Memory
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                ASM_STATE.experienceLibrary.length > 0
+        
+        
+                ?
+        
+        
+                ASM_STATE.experienceLibrary.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.category}
+                        </strong>
+        
+        
+                        <br><br>
+        
+        
+                        Problem:
+        
+                        <br>
+        
+                        ${item.problem}
+        
+        
+                        <br><br>
+        
+        
+                        Successful Action:
+        
+                        <br>
+        
+                        ${item.successfulAction}
+        
+        
+                        <br><br>
+        
+        
+                        Effectiveness:
+        
+                        <br>
+        
+                        ${item.effectiveness}
+        
+        
+                        <br><br>
+        
+        
+                        Confidence:
+        
+                        <br>
+        
+                        ${item.confidence}%
+        
+        
+                        <br>
+        
+        
+                        Used:
+        
+                        ${item.timesUsed}
+        
+                        time(s)
+        
+        
+                    </div>
+        
+        
+                    <hr>
+        
+        
+                    `
+                ).join("")
+        
+        
+                :
+        
+        
+                "No experience memory recorded."
+        
+        
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                ⭐ Experience-Based Recommendations
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                experienceRecommendations.length > 0
+        
+        
+                ?
+        
+        
+                experienceRecommendations.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.category}
+                        </strong>
+        
+        
+                        <br><br>
+        
+        
+                        Problem:
+        
+                        <br>
+        
+                        ${item.problem}
+        
+        
+                        <br><br>
+        
+        
+                        Recommended Action:
+        
+                        <br>
+        
+                        ${item.recommendation}
+        
+        
+                        <br><br>
+        
+        
+                        Confidence:
+        
+                        <br>
+        
+                        ${item.confidence}%
+        
+        
+                        <br>
+        
+        
+                        Used:
+        
+                        ${item.timesUsed}
+        
+                        time(s)
+        
+        
+                        <br><br>
+        
+        
+                        Reason:
+        
+                        <br>
+        
+                        ${item.reason}
+        
+        
+                    </div>
+        
+        
+                    <hr>
+        
+        
+                    `
+                ).join("")
+        
+        
+                :
+        
+        
+                "No experience-based recommendations available."
+        
+        
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+            
+            
+            <strong>
+                🧠 Manager Decision Memory
+            </strong>
+            
+            
+            <br><br>
+            
+            
+            <label>
+                System Recommendation
+            </label>
+            
+            
+            <br>
+            
+            
+            <textarea
+            
+                id="decision-recommendation"
+            
+                rows="3"
+            
+                style="width:100%;"
+            
+            ></textarea>
+            
+            
+            <br><br>
+            
+            
+            <label>
+                Action Taken
+            </label>
+            
+            
+            <br>
+            
+            
+            <textarea
+            
+                id="decision-action"
+            
+                rows="3"
+            
+                style="width:100%;"
+            
+            ></textarea>
+            
+            
+            <br><br>
+            
+            
+            <label>
+                Outcome
+            </label>
+            
+            
+            <br>
+            
+            
+            <textarea
+            
+                id="decision-outcome"
+            
+                rows="3"
+            
+                style="width:100%;"
+            
+            ></textarea>
+            
+            
+            <br><br>
+            
+            
+            <button onclick="saveManagerDecision()">
+            
+                Save Decision
+            
+            </button>
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                📚 Decision History
+            </strong>
+
+
+            <br><br>
+
+
+            ${
+                ASM_STATE.decisions.length > 0
+
+
+                ?
+
+
+                ASM_STATE.decisions.map(
+                    item => `
+
+
+                    <div>
+
+
+                        <strong>
+                            ${item.date}
+                        </strong>
+
+
+                        <br><br>
+
+
+                        <strong>
+                            Recommendation:
+                        </strong>
+
+
+                        <br>
+
+
+                        ${item.recommendation}
+
+
+                        <br><br>
+
+
+                        <strong>
+                            Action Taken:
+                        </strong>
+
+
+                        <br>
+
+
+                        ${item.action}
+
+
+                        <br><br>
+
+
+                        <strong>
+                            Outcome:
+                        </strong>
+
+
+                        <br>
+
+
+                        ${item.outcome}
+
+
+                    </div>
+
+
+                    <hr>
+
+
+                    `
+                ).join("")
+
+
+                :
+
+
+                "No manager decisions recorded."
+
+
+            }
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🗓️ Shift Memory
+            </strong>
+        
+        
+            <br><br>
+        
+        
+        
+            ${
+                memory.map(
+                    item => `
+        
+        
+                    <div>
+        
+        
+                        <strong>
+                            ${item.type}
+                        </strong>
+        
+        
+                        <br>
+        
+        
+                        ${item.message}
+        
+        
+                    </div>
+        
+        
+                    <br>
+        
+        
+                    `
+                ).join("")
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🌙 Shift Closeout Preview
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            Sales:
+        
+            ${closeout.sales}
+        
+        
+            <br><br>
+        
+        
+            Truck:
+        
+            ${closeout.truck}
+        
+        
+            <br><br>
+        
+        
+            Notes:
+        
+            ${closeout.notes}
+        
+        
+            <br><br>
+        
+        
+            Incidents:
+        
+            ${closeout.incidents}
+        
+        
+        </div>
+
+
+
+        <div class="dashboard-card">
+        
+        
+            <strong>
+                🗣️ Generated Handoff
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                handoff.map(
+                    item => `
+        
+                    <div>
+        
+                        <strong>
+                            ${item.title}
+                        </strong>
+        
+        
+                        <br>
+        
+        
+                        ${item.action}
+        
+        
+                    </div>
+        
+        
+                    <br>
+        
+                    `
+                ).join("")
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+        
+        
+            <strong>
+                🤝 Handoff Status
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${handoffStatus}
+        
+        
+            <br><br>
+        
+        
+            From:
+        
+            ${
+                ASM_STATE.shift.handoffFrom
+                ||
+                "Pending"
+            }
+        
+        
+            <br><br>
+        
+        
+            Received By:
+        
+            ${
+                ASM_STATE.shift.receivingManager
+                ||
+                "Pending"
+            }
+        
+        
+        
+            ${
+                ASM_STATE.shift.handoffAccepted
+        
+                ?
+        
+                ""
+        
+                :
+        
+                `
+                <br><br>
+        
+                <button onclick="acceptHandoff()">
+        
+                    Accept Handoff
+        
+                </button>
+                `
+        
+            }
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🧠 Operational Trends
+            </strong>
+
+
+            <br><br>
+
+
+            ${
+                patterns.length > 0
+
+
+                ?
+
+
+                patterns.map(
+                    item => `
+
+
+                    <div>
+
+
+                        <strong>
+                            ${item.priority}
+                            -
+                            ${item.category}
+                        </strong>
+
+
+                        <br><br>
+
+
+                        ${item.pattern}
+
+
+                        <br><br>
+
+
+                        <strong>
+                            Recommendation:
+                        </strong>
+
+
+                        <br>
+
+
+                        ${item.recommendation}
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    `
+                ).join("")
+
+
+                :
+
+
+                "No recurring issues detected."
+
+
+            }
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+        
+        
+            <strong>
+                📊 Shift Analytics
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            Completed Shifts:
+        
+            ${analytics.totalShifts}
+        
+        
+            <br><br>
+        
+        
+            Average Readiness:
+        
+            ${analytics.averageReadiness}%
+        
+        
+            <br><br>
+        
+        
+            Average Sales Pace:
+        
+            ${analytics.averageSalesPace}%
+        
+        
+            <br><br>
+        
+        
+            Average Incidents:
+        
+            ${analytics.averageIncidents}
+        
+        
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                💰 Sales Performance
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            Daily Goal:
+        
+            $${salesGoal.toLocaleString()}
+        
+        
+            <br>
+        
+        
+            Current Sales:
+        
+            $${currentSales.toLocaleString()}
+        
+        
+            <br>
+        
+        
+            Sales Pace:
+        
+            ${salesPace}%
+        
+        
+            <br>
+        
+        
+            Average Ticket:
+        
+            $${averageTicket.toFixed(2)}
+        
+        
+        </div>
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🧠 Cash Office Intelligence
+            </strong>
+
+
+            <br><br>
+
+
+            <strong>
+                Today's Cash Movement
+            </strong>
+
+
+            <br><br>
+
+
+            ⬇️ Drops:
+
+            <br>
+
+            $${(cashOffice.drops || 0).toFixed(2)}
+
+
+            <br><br>
+
+
+            🏦 Deposits:
+
+            <br>
+
+            $${(cashOffice.deposits || 0).toFixed(2)}
+
+
+            <br><br>
+
+
+            🏧 Pickups:
+
+            <br>
+
+            $${(cashOffice.pickups || 0).toFixed(2)}
+
+
+            <br><br>
+
+
+            <strong>
+                Safe Balance
+            </strong>
+
+
+            <br>
+
+            $${(cashOffice.safeBalance || 0).toFixed(2)}
+
+
+            <br><br>
+
+
+            <strong>
+                ⚠️ Cash Risk Level
+            </strong>
+
+
+            <br>
+
+            ${cashOffice.riskLevel}
+
+
+            <br><br>
+
+
+            <strong>
+                📊 Variance History
+            </strong>
+
+
+            <br>
+
+            ${
+                ASM_STATE.cashOffice.intelligence.alerts.length > 0
+
+                ?
+
+                ASM_STATE.cashOffice.intelligence.alerts.map(
+                    alert => `
+
+
+                    <div>
+
+
+                    ${alert.priority}
+
+                    -
+
+                    ${alert.message}
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    `
+                ).join("")
+
+
+                :
+
+                "No cash risks detected."
+
+            }
+
+
+            <br>
+
+
+            <strong>
+                🧠 Recommended Actions
+            </strong>
+
+
+            <br><br>
+
+
+            ${
+                generateCashDecisionRecommendations()
+                .map(
+                    item => `
+
+
+                    <div>
+
+
+                    <strong>
+                    ${item.priority}
+                    -
+                    ${item.category}
+                    </strong>
+
+
+                    <br>
+
+
+                    ${item.message}
+
+
+                    <br>
+
+
+                    Recommended:
+
+                    <br>
+
+
+                    ${item.recommendedAction}
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    `
+                )
+                .join("")
+
+            }
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+        
+        
+        <strong>
+        🧠 Cash Office Learning
+        </strong>
+        
+        
+        <br><br>
+        
+        
+        ${
+            ASM_STATE.experienceLibrary.filter(
+                item =>
+                item.category === "CASH OFFICE"
+            ).length > 0
+        
+        
+            ?
+        
+        
+            ASM_STATE.experienceLibrary
+            .filter(
+                item =>
+                item.category === "CASH OFFICE"
+            )
+            .map(
+                item => `
+        
+        
+                <div>
+        
+        
+                <strong>
+                CASH ISSUE
+                </strong>
+        
+        
+                <br><br>
+        
+        
+                Problem:
+        
+                <br>
+        
+                ${item.problem}
+        
+        
+                <br><br>
+        
+        
+                Successful Resolution:
+        
+                <br>
+        
+                ${item.successfulAction}
+        
+        
+                <br><br>
+        
+        
+                Confidence:
+        
+                <br>
+        
+                ${item.confidence}%
+        
+        
+                <br><br>
+        
+        
+                Times Used:
+        
+                <br>
+        
+                ${item.timesUsed}
+        
+        
+                <br><br>
+        
+        
+                Status:
+        
+                <br>
+        
+        
+                ${
+                    item.confidence >= 75
+        
+                    ?
+        
+                    "🟢 Trusted Memory"
+        
+                    :
+        
+                    item.confidence >= 50
+        
+                    ?
+        
+                    "🟡 Developing Memory"
+        
+                    :
+        
+                    "🔵 Learning Phase"
+        
+                }
+        
+        
+                </div>
+        
+        
+                <hr>
+        
+        
+                `
+            )
+            .join("")
+        
+        
+            :
+        
+        
+            "No cash office learning records yet."
+        
+        
+        }
+        
+        
+        </div>
+
+
+                <div class="dashboard-card">
+
+
+            <strong>
+                🚚 Freight Intelligence
+            </strong>
+
+
+            <br><br>
+
+
+            🚛 Truck Status:
+
+
+            <br>
+
+
+            ${ASM_STATE.truck.status}
+
+
+            <br><br>
+
+
+            📦 Boxes Received:
+
+
+            <br>
+
+
+            ${ASM_STATE.truck.boxes}
+
+
+            <br><br>
+
+
+            ✅ Boxes Processed:
+
+
+            <br>
+
+
+            ${ASM_STATE.truck.processed}
+
+
+            <br><br>
+
+
+            📦 Remaining:
+
+
+            <br>
+
+
+            ${ASM_STATE.truck.remaining}
+
+
+            <br><br>
+
+
+            📊 Completion:
+
+
+            <br>
+
+
+            ${ASM_STATE.truck.intelligence.completionPercent}%
+
+
+            <br><br>
+
+
+            ⚠️ Risk Level:
+
+
+            <br>
+
+
+            <strong>
+
+                ${ASM_STATE.truck.intelligence.riskLevel}
+
+            </strong>
+
+
+            <br><br>
+
+
+            🧠 Recommendations:
+
+
+            <br><br>
+
+
+            ${
+                ASM_STATE.truck.intelligence.recommendations.length > 0
+
+
+                ?
+
+
+                ASM_STATE.truck.intelligence.recommendations.map(
+
+                    item => `
+
+
+                    <div>
+
+
+                        ${item}
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    `
+
+                ).join("")
+
+
+                :
+
+
+                "No freight recommendations."
+
+
+            }
+
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🚚 Freight Learning
+            </strong>
+        
+        
+            <br><br>
+        
+        
+            ${
+                ASM_STATE.experienceLibrary.filter(
+        
+                    item =>
+                    item.category === "FREIGHT"
+        
+                ).length > 0
+        
+        
+                ?
+        
+        
+                ASM_STATE.experienceLibrary
+        
+                .filter(
+        
+                    item =>
+                    item.category === "FREIGHT"
+        
+                )
+        
+                .map(
+        
+                    item => `
+        
+        
+                    <div>
+        
+        
+                    <strong>
+                    FREIGHT ISSUE
+                    </strong>
+        
+        
+                    <br><br>
+        
+        
+                    Previous Issue:
+        
+                    <br>
+        
+                    ${item.problem}
+        
+        
+                    <br><br>
+        
+        
+                    Successful Resolution:
+        
+                    <br>
+        
+                    ${item.successfulAction}
+        
+        
+                    <br><br>
+        
+        
+                    Confidence:
+        
+                    <br>
+        
+                    ${item.confidence}%
+        
+        
+                    <br><br>
+        
+        
+                    Times Used:
+        
+                    <br>
+        
+                    ${item.timesUsed}
+        
+        
+                    <br><br>
+        
+        
+                    Status:
+        
+                    <br>
+        
+        
+                    ${
+                        item.confidence >= 75
+        
+                        ?
+        
+                        "🟢 Trusted Memory"
+        
+                        :
+        
+                        item.confidence >= 50
+        
+                        ?
+        
+                        "🟡 Developing Memory"
+        
+                        :
+        
+                        "🔵 Learning Phase"
+        
+                    }
+        
+        
+                    </div>
+        
+        
+                    <hr>
+        
+        
+                    `
+        
+                )
+        
+                .join("")
+        
+        
+                :
+        
+        
+                "No freight learning records yet."
+        
+        
+            }
+        
+        
+        </div>
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                Store Readiness Score
+            </strong>
+
+
+            <br><br>
+
+
+            ${readinessScore}%
+
+
+            <br><br>
+
+
+            Status:
+
+            ${status}
+
+
+        </div>
+
+
+
+    `;
+
+
+}
+
+
+
+/* ==========================================================
+   SALES DASHBOARD
+========================================================== */
+
+function renderSales(){
+
+    return `
+
+        <h2>
+            💰 Sales Dashboard
+        </h2>
+
+        <p>
+            Enter current sales performance.
+        </p>
+
+
+        <form onsubmit="updateSales(event)">
+
+
+            <div class="dashboard-card">
+
+
+                <strong>
+                    Daily Goal
+                </strong>
+
+                <br><br>
+
+                $${ASM_STATE.sales.dailyGoal.toLocaleString()}
+
+
+                <hr>
+
+
+                <label>
+                    Current Sales
+                </label>
+
+                <br>
+
+                <input
+
+                    id="sales-current"
+
+                    type="number"
+
+                    step="0.01"
+
+                    value="${ASM_STATE.sales.currentSales}"
+
+                >
+
+
+                <br><br>
+
+
+                <label>
+                    Transactions
+                </label>
+
+                <br>
+
+                <input
+
+                    id="sales-transactions"
+
+                    type="number"
+
+                    value="${ASM_STATE.sales.transactions}"
+
+                >
+
+
+                <br><br>
+
+
+                <button type="submit">
+
+                    Update Sales
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+        <div class="dashboard-card">
+
+            <strong>
+                Average Ticket
+            </strong>
+
+            <br><br>
+
+            $${ASM_STATE.sales.averageTicket.toFixed(2)}
+
+        </div>
+
+
+        <div class="dashboard-card">
+
+            <strong>
+                Sales Pace
+            </strong>
+
+            <br><br>
+
+            ${ASM_STATE.sales.salesPace}%
+
+        </div>
+
+    `;
+
+}
+
+
+/* ==========================================================
+   TRUCK SCREEN
+========================================================== */
+
+
+function renderTruck(){
+
+
+    let completion = 0;
+
+
+    if(
+        ASM_STATE.truck.boxes > 0
+    ){
+
+        completion = Math.round(
+
+            (
+
+                ASM_STATE.truck.processed
+
+                /
+
+                ASM_STATE.truck.boxes
+
+            )
+
+            *
+
+            100
+
+        );
+
+    }
+
+
+
+    return `
+
+
+        <h2>
+            🚚 Truck Operations
+        </h2>
+
+
+
+        <p>
+            Track freight processing progress.
+        </p>
+
+
+
+        <form onsubmit="updateTruck(event)">
+
+
+
+            <div class="dashboard-card">
+
+
+                Status:
+
+                ${ASM_STATE.truck.status}
+
+
+                <br><br>
+
+
+                <label>
+                    Total Boxes
+                </label>
+
+
+                <br>
+
+
+                <input
+
+                    id="truck-boxes"
+
+                    type="number"
+
+                    value="${ASM_STATE.truck.boxes}"
+
+                >
+
+
+
+                <br><br>
+
+
+
+                <label>
+                    Processed Boxes
+                </label>
+
+
+                <br>
+
+
+                <input
+
+                    id="truck-processed"
+
+                    type="number"
+
+                    value="${ASM_STATE.truck.processed}"
+
+                >
+
+
+
+                <br><br>
+
+
+
+                <button type="submit">
+
+                    Update Truck
+
+                </button>
+
+
+
+            </div>
+
+
+
+        </form>
+
+
+
+
+        <div class="dashboard-card">
+
+
+            Completion:
+
+            ${completion}%
+
+
+        </div>
+
+
+    `;
+
+
+}
+
+
+function renderOpening(){
+
+
+    let checklistHTML = "";
+
+
+
+    ASM_STATE.openingChecklist.forEach(item => {
+
+
+        checklistHTML += `
+
+            <div class="dashboard-card">
+
+
+                <input
+                    type="checkbox"
+                    ${
+                        item.complete
+                        ? "checked"
+                        : ""
+                    }
+
+                    onclick="toggleOpeningTask(${item.id})"
+                >
+
+
+                ${item.task}
+
+
+            </div>
+
+
+        `;
+
+
+    });
+
+
+
+
+    return `
+
+
+        <h2>
+            🌅 Opening Checklist
+        </h2>
+
+
+        <p>
+            Complete opening procedures.
+        </p>
+
+
+        ${checklistHTML}
+
+
+
+        <div class="dashboard-card">
+
+
+            Status:
+
+            ${
+                ASM_STATE.daily.openingComplete
+                ? "✅ Opening Complete"
+                : "⏳ In Progress"
+            }
+
+
+        </div>
+
+
+    `;
+
+
+}
+
+
+
+
+
+function renderClosing(){
+
+
+    let checklistHTML = "";
+
+
+
+    ASM_STATE.closingChecklist.forEach(item => {
+
+
+        checklistHTML += `
+
+            <div class="dashboard-card">
+
+
+                <input
+                    type="checkbox"
+
+                    ${
+                        item.complete
+                        ? "checked"
+                        : ""
+                    }
+
+
+                    onclick="toggleClosingTask(${item.id})"
+                >
+
+
+                ${item.task}
+
+
+            </div>
+
+
+        `;
+
+
+    });
+
+
+
+
+    return `
+
+
+        <h2>
+            🌙 Closing Checklist
+        </h2>
+
+
+        <p>
+            Complete closing procedures.
+        </p>
+
+
+        ${checklistHTML}
+
+
+
+        <div class="dashboard-card">
+
+
+            Status:
+
+            ${
+                ASM_STATE.daily.closingComplete
+                ? "✅ Closing Complete"
+                : "⏳ In Progress"
+            }
+
+
+        </div>
+
+
+    `;
+
+
+}
+
+
+
+
+
+function renderTasks(){
+
+
+    let taskHTML = "";
+
+
+
+    const sortedTasks =
+        [...ASM_STATE.tasks].sort(
+            (a,b)=>{
+
+
+                const priorityOrder = {
+
+
+                    HIGH:1,
+
+                    MEDIUM:2,
+
+                    LOW:3
+
+
+                };
+
+
+                return (
+                    priorityOrder[a.priority]
+                    -
+                    priorityOrder[b.priority]
+                );
+
+
+            }
+        );
+
+
+
+    sortedTasks.forEach(task => {
+
+
+        taskHTML += `
+
+            <div class="dashboard-card">
+
+                <input
+                    type="checkbox"
+
+                    ${
+                        task.complete
+                        ? "checked"
+                        : ""
+                    }
+
+                    onclick="toggleTask(${task.id})"
+                >
+
+
+                <strong>
+                    ${task.priority}
+                </strong>
+
+
+                <br>
+
+
+                ${task.name}
+
+
+            </div>
+
+        `;
+
+
+    });
+
+
+
+    return `
+
+
+        <h2>
+            ✅ Daily Tasks
+        </h2>
+
+
+
+        <p>
+            Manage today's ASM priorities.
+        </p>
+
+
+
+        ${taskHTML}
+
+
+
+        <div class="dashboard-card">
+
+
+            Completed:
+
+            ${
+                ASM_STATE.tasks.filter(
+                    task => task.complete
+                ).length
+            }
+
+
+            /
+
+            ${ASM_STATE.tasks.length}
+
+
+        </div>
+
+
+
+        <form onsubmit="addTask(event)">
+
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    ➕ Add New Task
+                </h3>
+
+
+                <input
+
+                    id="new-task-name"
+
+                    type="text"
+
+                    placeholder="Enter task..."
+
+                >
+
+
+
+                <br><br>
+
+
+
+                <select id="new-task-priority">
+
+
+                    <option value="HIGH">
+                        HIGH
+                    </option>
+
+
+                    <option value="MEDIUM">
+                        MEDIUM
+                    </option>
+
+
+                    <option value="LOW">
+                        LOW
+                    </option>
+
+
+                </select>
+
+
+
+                <br><br>
+
+
+
+                <button type="submit">
+
+                    Add Task
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    `;
+
+
+}
+
+
+
+
+
+function renderNotes(){
+
+
+    let notesHTML = "";
+
+
+
+    ASM_STATE.notes.forEach(note => {
+
+
+
+        notesHTML += `
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+
+                ${note.category}
+
+            </strong>
+
+
+            <br><br>
+
+
+            ${note.text}
+
+
+            <br><br>
+
+
+            <small>
+
+                Created:
+                ${note.created}
+
+            </small>
+
+
+        </div>
+
+
+        `;
+
+
+
+    });
+
+
+
+/* ==========================================================
+   SHIFT HISTORY SCREEN
+========================================================== */
+
+
+function renderHistory(){
+
+
+    let historyHTML = "";
+
+
+
+    ASM_STATE.closeouts.forEach(record => {
+
+
+
+        let handoffHTML = "";
+
+
+
+        record.handoff.forEach(item => {
+
+
+            handoffHTML += `
+
+
+                <div>
+
+
+                    <strong>
+                        ${item.title}
+                    </strong>
+
+
+                    <br>
+
+
+                    ${item.action}
+
+
+                </div>
+
+
+                <br>
+
+
+            `;
+
+
+        });
+
+
+
+
+        historyHTML += `
+
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🗓️ Shift Closed
+            </strong>
+
+
+            <br><br>
+
+
+            Closed:
+
+            ${record.closedAt}
+
+
+            <br><br>
+
+
+            Closed By:
+
+            ${record.closedBy}
+
+
+            <br><br>
+
+
+            Readiness Score:
+
+            ${record.readinessScore}%
+
+
+            <br><br>
+
+
+            Sales:
+
+            ${record.sales}
+
+
+            <br><br>
+
+
+            Truck:
+
+            ${record.truck}
+
+
+            <br><br>
+
+
+            Notes:
+
+            ${record.notes}
+
+
+            <br>
+
+
+            Incidents:
+
+            ${record.incidents}
+
+
+            <br>
+
+
+            Remaining Tasks:
+
+            ${record.incompleteTasks}
+
+
+            <hr>
+
+
+            <strong>
+                🗣️ Handoff
+            </strong>
+
+
+            <br><br>
+
+
+            ${handoffHTML}
+
+
+
+        </div>
+
+
+
+        `;
+
+
+
+    });
+
+
+
+
+    return `
+
+
+        <h2>
+            📚 Shift History
+        </h2>
+
+
+
+        <p>
+            Review previous ASM shift closeouts.
+        </p>
+
+
+
+        ${
+            historyHTML ||
+            "No completed shifts yet."
+        }
+
+
+
+    `;
+
+
+}
+
+
+    return `
+
+
+
+        <h2>
+            📝 Daily Manager Notes
+        </h2>
+
+
+
+        <p>
+            Document shift events, associate notes, and store issues.
+        </p>
+
+
+
+        ${notesHTML}
+
+
+
+        <form onsubmit="addNote(event)">
+
+
+
+            <div class="dashboard-card">
+
+
+                <h3>
+                    ➕ Add Manager Note
+                </h3>
+
+
+
+                <select id="note-category">
+
+
+                    <option value="Store Condition">
+                        Store Condition
+                    </option>
+
+
+                    <option value="Associate">
+                        Associate
+                    </option>
+
+
+                    <option value="Customer">
+                        Customer
+                    </option>
+
+
+                    <option value="Safety">
+                        Safety
+                    </option>
+
+
+                    <option value="Maintenance">
+                        Maintenance
+                    </option>
+
+
+                    <option value="Truck">
+                        Truck
+                    </option>
+
+
+                </select>
+
+
+
+                <br><br>
+
+
+
+                <textarea
+
+                    id="note-text"
+
+                    placeholder="Enter note..."
+
+                    rows="5"
+
+                    style="width:100%;"
+
+                ></textarea>
+
+
+
+                <br><br>
+
+
+
+                <button type="submit">
+
+                    Save Note
+
+                </button>
+
+
+
+            </div>
+
+
+
+        </form>
+
+
+    `;
+
+
+}
+
+
+
+
+
+function renderTools(){
+
+    return `
+
+        <h2>
+            🧰 ASM Tools
+        </h2>
+
+
+        <p>
+            Operational tools loading soon.
+        </p>
+
+
+    `;
+
+}
+function renderHandoff(){
+
+    let handoffHTML = "";
+
+
+    ASM_STATE.handoffs.forEach(item => {
+
+        handoffHTML += `
+
+            <div class="dashboard-card">
+
+                <strong>
+                    ${item.category}
+                </strong>
+
+                <br><br>
+
+                ${item.message}
+
+                <br><br>
+
+                <small>
+                    Created:
+                    ${item.created}
+                </small>
+
+            </div>
+
+        `;
+
+    });
+
+
+return `
+
+    <h2>
+        🗣️ Manager Handoff
+    </h2>
+
+
+    <p>
+        Record information for the next manager.
+    </p>
+
+
+
+    <form onsubmit="addHandoff(event)">
+
+
+
+        <textarea
+
+            id="handoff-message"
+
+            placeholder="Enter handoff notes..."
+
+            style="
+                width:100%;
+                height:80px;
+            "
+
+        ></textarea>
+
+
+
+        <br><br>
+
+
+
+        <select id="handoff-category">
+
+
+            <option>
+                OPERATIONS
+            </option>
+
+
+            <option>
+                SAFETY
+            </option>
+
+
+            <option>
+                INVENTORY
+            </option>
+
+
+            <option>
+                STAFFING
+            </option>
+
+
+        </select>
+
+
+
+        <br><br>
+
+
+
+        <button type="submit">
+
+            Save Handoff
+
+        </button>
+
+
+
+    </form>
+
+
+
+    <hr>
+
+
+
+    <h3>
+        Previous Handoffs
+    </h3>
+
+
+
+    ${handoffHTML}
+
+
+`;
+
+}   // <-- END renderHandoff
+
+
+function renderIncidents(){
+
+
+    let incidentHTML = "";
+
+
+    ASM_STATE.incidents.forEach(item => {
+
+
+        incidentHTML += `
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                ${item.category}
+            </strong>
+
+
+            <br>
+
+
+            Severity:
+            ${item.severity}
+
+
+            <br><br>
+
+
+            ${item.description}
+
+
+            <br><br>
+
+
+            <small>
+                Created:
+                ${item.created}
+            </small>
+
+
+        </div>
+
+
+        `;
+
+
+    });
+
+
+
+    return `
+
+
+        <h2>
+            🚨 Incident Log
+        </h2>
+
+
+        <p>
+            Record operational incidents and follow-up actions.
+        </p>
+
+
+        <form onsubmit="addIncident(event)">
+
+
+            <select id="incident-category">
+
+
+                <option>
+                    SAFETY
+                </option>
+
+
+                <option>
+                    CUSTOMER
+                </option>
+
+
+                <option>
+                    STAFFING
+                </option>
+
+
+                <option>
+                    EQUIPMENT
+                </option>
+
+
+                <option>
+                    LOSS PREVENTION
+                </option>
+
+
+            </select>
+
+
+
+            <br><br>
+
+
+
+            <select id="incident-severity">
+
+
+                <option>
+                    LOW
+                </option>
+
+
+                <option>
+                    MEDIUM
+                </option>
+
+
+                <option>
+                    HIGH
+                </option>
+
+
+                <option>
+                    CRITICAL
+                </option>
+
+
+            </select>
+
+
+
+            <br><br>
+
+
+
+            <textarea
+
+                id="incident-description"
+
+                placeholder="Describe incident..."
+
+                style="
+                    width:100%;
+                    height:80px;
+                "
+
+            ></textarea>
+
+
+
+            <br><br>
+
+
+
+            <button type="submit">
+
+                Save Incident
+
+            </button>
+
+
+        </form>
+
+
+
+        <hr>
+
+
+        <h3>
+            Previous Incidents
+        </h3>
+
+
+        ${incidentHTML}
+
+
+    `;
+
+
+}
+
+/* ==========================================================
+   SHIFT HISTORY SCREEN
+========================================================== */
+
+
+function renderHistory(){
+
+
+    let historyHTML = "";
+
+
+
+    ASM_STATE.closeouts.forEach(record => {
+
+
+        let handoffHTML = "";
+
+
+        record.handoff.forEach(item => {
+
+
+            handoffHTML += `
+
+
+                <div>
+
+                    <strong>
+                        ${item.title}
+                    </strong>
+
+
+                    <br>
+
+
+                    ${item.action}
+
+                </div>
+
+
+                <br>
+
+
+            `;
+
+
+        });
+
+
+
+        historyHTML += `
+
+
+        <div class="dashboard-card">
+
+
+            <strong>
+                🗓️ Shift Closed
+            </strong>
+
+
+            <br><br>
+
+
+            Closed:
+
+            ${record.closedAt}
+
+
+            <br><br>
+
+
+            Closed By:
+
+            ${record.closedBy}
+
+
+            <br><br>
+
+
+            Readiness Score:
+
+            ${record.readinessScore}%
+
+
+            <br><br>
+
+
+            Sales:
+
+            ${record.sales}
+
+
+            <br><br>
+
+
+            Truck:
+
+            ${record.truck}
+
+
+            <br><br>
+
+
+            Remaining Tasks:
+
+            ${record.incompleteTasks}
+
+
+            <hr>
+
+
+            <strong>
+                🗣️ Handoff
+            </strong>
+
+
+            <br><br>
+
+
+            ${handoffHTML}
+
+
+        </div>
+
+
+        `;
+
+
+    });
+
+
+
+    return `
+
+
+        <h2>
+            📚 Shift History
+        </h2>
+
+
+        <p>
+            Review previous ASM shift closeouts.
+        </p>
+
+
+
+        ${
+            historyHTML ||
+            "No completed shifts yet."
+        }
+
+
+    `;
+
+
+}
+/* ==========================================================
+   SCREEN NAVIGATION
+========================================================== */
+
+
+/* ==========================================================
+   SCREEN CONTROLLER
+========================================================== */
+
+
+function showScreen(screen){
+
+    currentScreen = screen;
+
+
+    const screenArea =
+        document.getElementById("screen");
+
+
+    if(!screenArea){
+        return;
+    }
+
+
+
+    switch(screen){
+    
+    
+        case "dashboard":
+    
+            screenArea.innerHTML =
+                renderDashboard();
+    
+            break;
+    
+    
+    
+        case "history":
+    
+            screenArea.innerHTML =
+                renderHistory();
+    
+            break;
+    
+    
+    
+        case "opening":
+    
+            screenArea.innerHTML =
+                renderOpening();
+    
+            break;
+    
+    
+    
+        case "closing":
+    
+            screenArea.innerHTML =
+                renderClosing();
+    
+            break;
+
+
+
+        case "tasks":
+
+            screenArea.innerHTML =
+                renderTasks();
+
+            break;
+            
+
+
+        case "sales":
+
+            screenArea.innerHTML =
+                renderSales();
+        
+            break;
+
+        
+        case "truck":
+
+            screenArea.innerHTML =
+                renderTruck();
+
+            break;
+
+
+
+        case "notes":
+
+            screenArea.innerHTML =
+                renderNotes();
+
+            break;
+
+
+
+        case "tools":
+
+            screenArea.innerHTML =
+                renderTools();
+
+            break;
+
+            
+        case "handoff":
+
+            screenArea.innerHTML =
+                renderHandoff();
+
+            break;
+
+            
+        case "incidents":
+
+            screenArea.innerHTML =
+                renderIncidents();
+
+            break;
+
+            
+        case "history":
+
+            screenArea.innerHTML =
+                renderHistory();
+        
+            break;
+
+
+
+        default:
+
+            screenArea.innerHTML =
+            `
+                <h2>
+                    Screen Not Found
+                </h2>
+            `;
+
+    }
+
+}
+    
+function addHandoff(event){
+
+
+    event.preventDefault();
+
+
+
+    const message =
+        document.getElementById(
+            "handoff-message"
+        ).value;
+
+
+
+    const category =
+        document.getElementById(
+            "handoff-category"
+        ).value;
+
+
+
+    if(!message.trim()){
+
+        return;
+
+    }
+
+
+
+    ASM_STATE.handoffs.push({
+
+
+        id:
+        Date.now(),
+
+
+        category:
+        category,
+
+
+        message:
+        message,
+
+
+        created:
+        new Date().toLocaleString()
+
+
+    });
+
+
+
+    saveASMState();
+
+
+
+    showScreen("handoff");
+
+
+}
+
+
+/* ==========================================================
+   OPENING CHECKLIST CONTROLLER
+========================================================== */
+
+
+function toggleOpeningTask(id){
+
+
+    const task =
+        ASM_STATE.openingChecklist.find(
+            item => item.id === id
+        );
+
+
+
+    if(task){
+
+        task.complete =
+            !task.complete;
+
+    }
+
+
+
+    const allComplete =
+        ASM_STATE.openingChecklist.every(
+            item => item.complete
+        );
+
+
+
+    ASM_STATE.daily.openingComplete =
+        allComplete;
+
+
+
+    saveASMState();
+
+
+
+    showScreen("opening");
+
+}
+/* ==========================================================
+   CLOSING CHECKLIST CONTROLLER
+========================================================== */
+
+
+function toggleClosingTask(id){
+
+
+    const task =
+        ASM_STATE.closingChecklist.find(
+            item => item.id === id
+        );
+
+
+
+    if(task){
+
+        task.complete =
+            !task.complete;
+
+    }
+
+
+
+    const allComplete =
+        ASM_STATE.closingChecklist.every(
+            item => item.complete
+        );
+
+
+
+    ASM_STATE.daily.closingComplete =
+        allComplete;
+
+    saveASMState();
+
+    showScreen("closing");
+
+}
+/* ==========================================================
+   DAILY TASK CONTROLLER
+========================================================== */
+
+
+function toggleTask(id){
+
+
+    const task =
+        ASM_STATE.tasks.find(
+            item => item.id === id
+        );
+
+
+
+    if(task){
+
+
+        task.complete =
+            !task.complete;
+
+
+
+        if(task.complete){
+
+            task.completedAt =
+                new Date().toLocaleString();
+
+        }
+
+        else{
+
+            task.completedAt =
+                null;
+
+        }
+
+    }
+
+
+
+    saveASMState();
+
+
+    showScreen("tasks");
+
+
+}
+    
+    /* ==========================================================
+   ADD NEW TASK CONTROLLER
+========================================================== */
+
+
+function addTask(event){
+
+
+    event.preventDefault();
+
+
+
+    const name =
+        document.getElementById(
+            "new-task-name"
+        ).value;
+
+
+
+    const priority =
+        document.getElementById(
+            "new-task-priority"
+        ).value;
+
+
+
+    if(!name.trim()){
+
+        return;
+
+    }
+
+
+
+    const newTask = {
+
+
+        id:
+        Date.now(),
+
+
+        name:
+        name,
+
+
+        priority:
+        priority,
+
+
+        complete:false,
+
+
+        created:
+        new Date().toLocaleString(),
+
+
+        completedAt:null
+
+
+    };
+
+
+
+    ASM_STATE.tasks.push(newTask);
+
+    saveASMState();
+
+    showScreen("tasks");
+
+
+}
+
+
+
+
+
+// ==========================================================
+// ADD MANAGER NOTE
+// ==========================================================
+
+
+function addNote(event){
+
+
+    event.preventDefault();
+
+
+
+    const category =
+        document.getElementById(
+            "note-category"
+        ).value;
+
+
+
+    const text =
+        document.getElementById(
+            "note-text"
+        ).value.trim();
+
+
+
+
+    if(!text){
+
+        alert(
+            "Note cannot be empty."
+        );
+
+        return;
+
+    }
+
+
+
+
+    const newNote = {
+
+
+        id:
+        Date.now(),
+
+
+        category:
+        category,
+
+
+        text:
+        text,
+
+
+        created:
+        new Date().toLocaleString()
+
+
+    };
+
+
+
+
+    ASM_STATE.notes.push(newNote);
+    console.log("NOTE SAVED:", newNote);
+    console.log("ALL NOTES:", ASM_STATE.notes);
+    saveASMState();
+
+    showScreen("notes");
+
+
+}
+
+/* ==========================================================
+   ADD INCIDENT CONTROLLER
+========================================================== */
+
+
+function addIncident(event){
+
+
+    event.preventDefault();
+
+
+
+    const category =
+        document.getElementById(
+            "incident-category"
+        ).value;
+
+
+
+    const severity =
+        document.getElementById(
+            "incident-severity"
+        ).value;
+
+
+
+    const description =
+        document.getElementById(
+            "incident-description"
+        ).value.trim();
+
+
+
+    if(!description){
+
+
+        alert(
+            "Incident description cannot be empty."
+        );
+
+
+        return;
+
+    }
+
+
+    const newIncident = {
+
+
+        id:
+        Date.now(),
+
+
+        category:
+        category,
+
+
+        severity:
+        severity,
+
+
+        description:
+        description,
+
+
+        created:
+        new Date().toLocaleString()
+
+
+    };
+
+
+
+    ASM_STATE.incidents.push(newIncident);
+
+
+
+    saveASMState();
+
+
+
+    showScreen("incidents");
+
+
+}
+
+
+/* ==========================================================
+   SALES CONTROLLER
+========================================================== */
+
+
+function updateSales(event){
+
+
+    event.preventDefault();
+
+
+
+    const salesInput =
+        document.getElementById(
+            "sales-current"
+        ).value;
+
+
+
+    const transactionInput =
+        document.getElementById(
+            "sales-transactions"
+        ).value;
+
+
+
+    ASM_STATE.sales.currentSales =
+        parseFloat(
+            salesInput
+        ) || 0;
+
+
+
+    ASM_STATE.sales.transactions =
+        parseInt(
+            transactionInput
+        ) || 0;
+
+
+
+
+    if(
+        ASM_STATE.sales.transactions > 0
+    ){
+
+        ASM_STATE.sales.averageTicket =
+
+            ASM_STATE.sales.currentSales
+
+            /
+
+            ASM_STATE.sales.transactions;
+
+
+    } else {
+
+
+        ASM_STATE.sales.averageTicket = 0;
+
+
+    }
+
+
+
+
+    if(
+        ASM_STATE.sales.dailyGoal > 0
+    ){
+
+        ASM_STATE.sales.salesPace =
+
+            Math.round(
+
+                (
+
+                    ASM_STATE.sales.currentSales
+
+                    /
+
+                    ASM_STATE.sales.dailyGoal
+
+                )
+
+                *
+
+                100
+
+            );
+
+
+    } else {
+
+
+        ASM_STATE.sales.salesPace = 0;
+
+
+    }
+
+
+
+
+    ASM_STATE.sales.lastUpdated =
+
+        new Date().toLocaleString();
+
+
+
+
+    saveASMState();
+
+
+
+    showScreen("sales");
+
+
+}
+
+
+/* ==========================================================
+   MANAGER DECISION MEMORY CONTROLLER
+========================================================== */
+
+
+function saveManagerDecision(){
+
+
+    const recommendation =
+        document.getElementById(
+            "decision-recommendation"
+        ).value.trim();
+
+
+
+    const action =
+        document.getElementById(
+            "decision-action"
+        ).value.trim();
+
+
+
+    const outcome =
+        document.getElementById(
+            "decision-outcome"
+        ).value.trim();
+
+
+
+    if(!action){
+
+        alert(
+            "Please enter the action taken."
+        );
+
+        return;
+
+    }
+
+
+
+    const decision = {
+
+
+        id:
+        Date.now(),
+
+
+        date:
+        new Date().toLocaleString(),
+
+
+        recommendation:
+        recommendation,
+
+
+        action:
+        action,
+
+
+        outcome:
+        outcome || "No outcome recorded",
+
+
+        manager:
+        ASM_STATE.currentUser
+
+
+    };
+
+
+
+    ASM_STATE.decisions.push(
+        decision
+    );
+
+
+
+    saveASMState();
+
+
+
+    showScreen("dashboard");
+
+
+}
+
+
+/* ==========================================================
+   TRUCK CONTROLLER
+========================================================== */
+
+
+function updateTruck(event){
+
+
+    event.preventDefault();
+
+
+
+    const boxesInput =
+        document.getElementById(
+            "truck-boxes"
+        ).value;
+
+
+
+    const processedInput =
+        document.getElementById(
+            "truck-processed"
+        ).value;
+
+
+
+    ASM_STATE.truck.boxes =
+
+        parseInt(
+            boxesInput
+        ) || 0;
+
+
+
+    ASM_STATE.truck.processed =
+
+        parseInt(
+            processedInput
+        ) || 0;
+
+
+
+    if(
+        ASM_STATE.truck.boxes > 0
+    ){
+
+        ASM_STATE.truck.completed =
+
+            ASM_STATE.truck.processed >=
+            ASM_STATE.truck.boxes;
+
+
+    }
+
+
+
+    ASM_STATE.truck.status =
+
+        ASM_STATE.truck.completed
+
+        ?
+
+        "Complete"
+
+        :
+
+        "In Progress";
+
+
+
+    saveASMState();
+
+
+
+    showScreen("truck");
+
+
+}
+
+
+/* ==========================================================
+   CLOSE SHIFT CONTROLLER
+========================================================== */
+
+
+function closeShift(){
+
+
+    const closeout =
+        generateShiftCloseout();
+
+
+
+    const handoff =
+        generateAutomaticHandoff();
+
+
+
+    const record = {
+
+
+        id:
+        Date.now(),
+
+
+
+        closedBy:
+        ASM_STATE.currentUser,
+
+
+
+        closedAt:
+        new Date().toLocaleString(),
+
+
+
+        readinessScore:
+        renderCurrentReadinessScore(),
+
+
+
+        sales:
+        closeout.sales,
+
+
+
+        truck:
+        closeout.truck,
+
+
+
+        notes:
+        closeout.notes,
+
+
+
+        incidents:
+        closeout.incidents,
+
+
+
+        incompleteTasks:
+        closeout.incompleteTasks,
+
+
+
+        handoff:
+        handoff
+
+
+
+    };
+
+
+
+    ASM_STATE.closeouts.push(record);
+
+
+
+    saveASMState();
+
+
+
+    alert(
+        "Shift Closed Successfully"
+    );
+
+
+}
+
+
+/* ==========================================================
+   HANDOFF ACCEPTANCE CONTROLLER
+========================================================== */
+
+
+function acceptHandoff(){
+
+
+    ASM_STATE.shift.handoffAccepted =
+        true;
+
+
+    ASM_STATE.shift.receivingManager =
+        ASM_STATE.currentUser;
+
+
+    saveASMState();
+
+
+    showScreen("dashboard");
+
+
+}
+
+
+/* ==========================================================
+   SHIFT ARCHIVE ENGINE
+========================================================== */
+
+
+function archiveClosedShift(){
+
+
+    const archiveRecord = {
+
+
+        id:
+        Date.now(),
+
+
+        date:
+        new Date().toLocaleDateString(),
+
+
+        openedAt:
+        ASM_STATE.shift.openedAt,
+
+
+        closedAt:
+        ASM_STATE.shift.closedAt,
+
+
+        openedBy:
+        ASM_STATE.shift.openedBy,
+
+
+        closedBy:
+        ASM_STATE.shift.closedBy,
+
+
+        readinessScore:
+        renderCurrentReadinessScore(),
+
+
+        sales:
+        `${ASM_STATE.sales.currentSales} / ${ASM_STATE.sales.dailyGoal}`,
+
+
+        truck:
+        `${ASM_STATE.truck.processed} / ${ASM_STATE.truck.boxes} boxes`,
+
+
+        notes:
+        ASM_STATE.notes.length,
+
+
+        incidents:
+        ASM_STATE.incidents.length,
+
+
+        handoffAccepted:
+        ASM_STATE.shift.handoffAccepted
+
+
+    };
+
+
+
+    ASM_STATE.shiftHistory.push(
+        archiveRecord
+    );
+
+
+}
+
+/* ==========================================================
+   SHIFT LIFECYCLE CONTROLLER
+========================================================== */
+
+
+function openShift(){
+
+
+    ASM_STATE.shift.status =
+        "ACTIVE";
+
+
+    ASM_STATE.shift.openedAt =
+        new Date().toLocaleString();
+
+
+    ASM_STATE.shift.openedBy =
+        ASM_STATE.currentUser;
+
+
+    ASM_STATE.shift.closedAt =
+        null;
+
+
+    ASM_STATE.shift.closedBy =
+        null;
+
+
+    ASM_STATE.shift.receivingManager =
+        null;
+
+
+    ASM_STATE.shift.handoffAccepted =
+        false;
+
+
+
+    saveASMState();
+
+
+    showScreen("dashboard");
+
+
+}
+
+
+
+function closeActiveShift(){
+
+
+    ASM_STATE.shift.status =
+        "CLOSED";
+
+
+    ASM_STATE.shift.closedAt =
+        new Date().toLocaleString();
+
+
+    ASM_STATE.shift.closedBy =
+        ASM_STATE.currentUser;
+
+    archiveClosedShift();
+
+    ASM_STATE.shift.handoffCreatedAt =
+    new Date().toLocaleString();
+
+
+    ASM_STATE.shift.handoffFrom =
+    ASM_STATE.currentUser;
+
+
+
+    closeShift();
+
+
+    saveASMState();
+
+
+    showScreen("dashboard");
+
+
+}
+
+
+/* ==========================================================
+   EXPERIENCE FEEDBACK INITIALIZER
+========================================================== */
+
+
+function initializeExperienceFeedbackStatus(){
+
+
+    if(
+        !ASM_STATE.experienceLibrary ||
+        ASM_STATE.experienceLibrary.length === 0
+    ){
+
+        return [];
+
+    }
+
+
+
+    ASM_STATE.experienceLibrary.forEach(item => {
+
+
+        if(
+            item.feedbackStatus === undefined
+        ){
+
+            item.feedbackStatus =
+            "PENDING";
+
+        }
+
+
+    });
+
+
+
+    saveASMState();
+
+
+
+    return ASM_STATE.experienceLibrary;
+
+
+}
+/* ==========================================================
+   APPLICATION STARTUP
+========================================================== */
+
+
+loadASMState();
+
+
+showScreen("dashboard");
+</script>
+
+</body>
+</html>

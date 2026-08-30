@@ -1,4 +1,6 @@
-﻿const products = [
+﻿const SITE_URL = "https://thegoodguyty35-ux.github.io/615-vinyl/";
+
+const products = [
   {
     id: "coast-script",
     name: "Good Vibes Script",
@@ -273,6 +275,15 @@ function renderCart() {
       persistCart();
     });
   });
+
+  const checkoutName = document.getElementById("checkout-name");
+  const checkoutEmail = document.getElementById("checkout-email");
+  if (checkoutName && !checkoutName.value) {
+    checkoutName.value = localStorage.getItem("615-vinyl-checkout-name") || "";
+  }
+  if (checkoutEmail && !checkoutEmail.value) {
+    checkoutEmail.value = localStorage.getItem("615-vinyl-checkout-email") || "";
+  }
 }
 
 function openCart() {
@@ -348,6 +359,9 @@ function setupTrivia() {
   const qText = document.getElementById("trivia-question");
   const resultText = document.getElementById("trivia-result");
 
+  let spinLocked = false;
+  let spinRotation = 0;
+
   const nextQuestion = () => {
     const item = triviaDeck[currentQuestion % triviaDeck.length];
     qText.textContent = item.question;
@@ -357,14 +371,26 @@ function setupTrivia() {
   nextQuestion();
 
   spinButton.addEventListener("click", () => {
+    if (spinLocked) return;
+    spinLocked = true;
+    spinButton.disabled = true;
+
     const prizeIndex = Math.floor(Math.random() * triviaDeck.length);
-    const rotation = 360 * 4 + (360 - prizeIndex * 72);
-    wheel.style.transform = `rotate(${rotation}deg)`;
+    const extraTurns = 360 * 5;
+    const segmentSize = 360 / triviaDeck.length;
+    const landingAngle = 360 - (prizeIndex * segmentSize + segmentSize / 2);
+    spinRotation += extraTurns + landingAngle;
+    wheel.style.transform = `rotate(${spinRotation}deg)`;
 
     const item = triviaDeck[prizeIndex];
     qText.textContent = item.question;
     resultText.textContent = `Answer: ${item.answer} — you are entered into the 615 Vinyl raffle.`;
     currentQuestion = prizeIndex + 1;
+
+    setTimeout(() => {
+      spinLocked = false;
+      spinButton.disabled = false;
+    }, 3600);
   });
 }
 
@@ -405,10 +431,29 @@ function setup() {
   const checkoutBtn = document.getElementById("checkout-button");
   if (checkoutBtn) {
     checkoutBtn.addEventListener("click", () => {
-      if (!cart.length) return;
-      const lines = cart.map(item => `${item.name} (${item.size}, ${item.finish}) x${item.quantity}`).join("%0D%0A");
+      if (!cart.length) {
+        alert("Your cart is empty. Add a decal before sending your order request.");
+        return;
+      }
+
+      const nameInput = document.getElementById("checkout-name");
+      const emailInput = document.getElementById("checkout-email");
+      const buyerName = (nameInput && nameInput.value.trim()) || "Customer";
+      const buyerEmail = (emailInput && emailInput.value.trim()) || "clarkone@gmail.com";
+
+      localStorage.setItem("615-vinyl-checkout-name", buyerName);
+      localStorage.setItem("615-vinyl-checkout-email", buyerEmail);
+
+      const lines = cart.map(item => `${item.name} (${item.mode} / ${item.size} / ${item.finish}) x${item.quantity} = ${money(item.price * item.quantity)}`).join("%0D%0A");
       const total = document.getElementById("cart-total").textContent;
-      window.location.href = `mailto:clarkone@gmail.com?subject=615%20Vinyl%20order%20request&body=${lines}%0D%0A%0D%0ATotal%20before%20final%20quote:%20${total}`;
+      const message = `Hello Christine,%0D%0A%0D%0A` +
+        `I would like to order the following from 615 Vinyl:%0D%0A${lines}%0D%0A%0D%0A` +
+        `Customer: ${buyerName}%0D%0A` +
+        `Email: ${buyerEmail}%0D%0A` +
+        `Order total: ${total}%0D%0A%0D%0A` +
+        `Please confirm the design and a final total before production.`;
+
+      window.location.href = `mailto:clarkone@gmail.com?subject=${encodeURIComponent("615 Vinyl order request")}&body=${encodeURIComponent(message)}`;
     });
   }
 
@@ -424,7 +469,7 @@ function setup() {
   }
 
   const qrImg = document.getElementById("qr-code");
-  if (qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.href.split("#")[0])}`;
+  if (qrImg) qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(SITE_URL)}`;
 }
 
 document.addEventListener("DOMContentLoaded", setup);

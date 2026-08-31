@@ -350,25 +350,30 @@ function setupUpload() {
     const file = event.target.files[0];
     if (!file) return;
 
-    const image = new Image();
-    image.onload = () => {
-      const canvas = document.getElementById("image-preview");
-      const context = canvas.getContext("2d");
-      context.clearRect(0, 0, canvas.width, canvas.height);
-      const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
-      const width = image.width * scale;
-      const height = image.height * scale;
-      const x = (canvas.width - width) / 2;
-      const y = (canvas.height - height) / 2;
-      context.drawImage(image, x, y, width, height);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.getElementById("image-preview");
+        const context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        const scale = Math.min(canvas.width / image.width, canvas.height / image.height);
+        const width = image.width * scale;
+        const height = image.height * scale;
+        const x = (canvas.width - width) / 2;
+        const y = (canvas.height - height) / 2;
+        context.drawImage(image, x, y, width, height);
 
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${image.width} ${image.height}"><image href="${image.src}" width="${image.width}" height="${image.height}" preserveAspectRatio="xMidYMid meet"/></svg>`;
-      const download = document.getElementById("svg-download");
-      download.href = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-      download.hidden = false;
-      document.getElementById("custom-status").textContent = "SVG preview ready. Final vector tracing and cleanup can be reviewed with your quote.";
+        // Embed the image as a data URL so the exported SVG stays portable outside this tab.
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${image.width} ${image.height}"><image href="${image.src}" width="${image.width}" height="${image.height}" preserveAspectRatio="xMidYMid meet"/></svg>`;
+        const download = document.getElementById("svg-download");
+        download.href = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+        download.hidden = false;
+        document.getElementById("custom-status").textContent = "SVG preview ready. Final vector tracing and cleanup can be reviewed with your quote.";
+      };
+      image.src = reader.result;
     };
-    image.src = URL.createObjectURL(file);
+    reader.readAsDataURL(file);
   });
 }
 

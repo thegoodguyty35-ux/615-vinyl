@@ -207,6 +207,7 @@
                         <button type="submit" class="button button-dark">Save profile</button>
                     </form>
                     <p class="mini-note" id="owner-login-status">Local profile ready for quick access.</p>
+                    <p class="mini-note" id="owner-security-status">Verification status: standard login.</p>
                 </div>
 
                 <div class="panel wide-panel">
@@ -221,6 +222,9 @@
                                 UPC / ASIN
                                 <input id="supply-code" type="text" placeholder="UPC or ASIN">
                             </label>
+                        </div>
+                        <div class="lookup-row">
+                            <button id="lookup-supplier-prices" type="button" class="button button-dark">Lookup supplier prices</button>
                         </div>
                         <div class="form-row">
                             <label>
@@ -240,6 +244,16 @@
                             <label>
                                 Cost per unit
                                 <input id="supply-cost" type="number" min="0" step="0.01" value="0">
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label>
+                                Supplier name
+                                <input id="supply-supplier" type="text" placeholder="e.g. Nashville Vinyl Co.">
+                            </label>
+                            <label>
+                                Preferred source
+                                <input id="supply-source" type="url" placeholder="https://example.com">
                             </label>
                         </div>
                         <div class="form-row">
@@ -271,6 +285,190 @@
                 <h3>Estimated timeline and buying triggers</h3>
                 <div id="inventory-summary" class="inventory-summary"></div>
             </div>
+
+            <div class="ops-summary panel">
+                <h3>Supplier comparison</h3>
+                <div id="supplier-comparison" class="supplier-comparison"></div>
+            </div>
+
+            <div class="ops-summary panel">
+                <h3>Production queue</h3>
+                <div id="queue-summary" class="queue-summary"></div>
+            </div>
+        </section>
+
+        <section id="design-studio" class="section-shell content-section design-studio-section">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">Design your piece</p>
+                    <h2>Freeform vinyl studio</h2>
+                </div>
+            </div>
+            <div class="studio-grid">
+                <div class="panel">
+                    <h3>Build a concept</h3>
+                    <form id="design-studio-form" class="inline-form">
+                        <label>
+                            Text or label
+                            <input id="design-text" type="text" placeholder="e.g. Good Vibes">
+                        </label>
+                        <label>
+                            Font size
+                            <input id="design-font-size" type="number" min="18" max="120" step="2" value="48">
+                        </label>
+                        <label>
+                            Shape
+                            <select id="design-shape">
+                                <option value="text">Text</option>
+                                <option value="circle">Circle</option>
+                                <option value="square">Square</option>
+                            </select>
+                        </label>
+                        <label>
+                            Accent color
+                            <input id="design-color" type="color" value="#d9674f">
+                        </label>
+                        <div class="option-row">
+                            <button id="add-design-element" type="button" class="button button-dark">Add to canvas</button>
+                            <button id="clear-design" type="button" class="button button-light">Clear</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel wide-panel">
+                    <canvas id="design-canvas" width="720" height="360" aria-label="Vinyl design mockup"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="section-shell content-section analytics-section">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">Business insights</p>
+                    <h2>Analytics + automation</h2>
+                </div>
+            </div>
+            <div class="analytics-grid">
+                <div class="metric-card">
+                    <h4>Total revenue</h4>
+                    <p id="metric-revenue" class="metric-value">$0.00</p>
+                    <small id="metric-revenue-change">vs last period</small>
+                </div>
+                <div class="metric-card">
+                    <h4>Orders completed</h4>
+                    <p id="metric-orders" class="metric-value">0</p>
+                    <small id="metric-orders-change">this month</small>
+                </div>
+                <div class="metric-card">
+                    <h4>Average order value</h4>
+                    <p id="metric-aov" class="metric-value">$0.00</p>
+                    <small id="metric-aov-change">per transaction</small>
+                </div>
+                <div class="metric-card">
+                    <h4>Active queue</h4>
+                    <p id="metric-queue" class="metric-value">0</p>
+                    <small id="metric-queue-change">orders in production</small>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h3>Order tracking & automation</h3>
+                <div class="tracking-grid" id="order-tracking"></div>
+            </div>
+
+            <div class="panel">
+                <h3>Notification setup</h3>
+                <form id="notification-form" class="inline-form">
+                    <label class="checkbox-row">
+                        <input id="notify-stripe" type="checkbox" checked>
+                        <span>Send Stripe payment confirmations</span>
+                    </label>
+                    <label class="checkbox-row">
+                        <input id="notify-production" type="checkbox" checked>
+                        <span>Send production status updates</span>
+                    </label>
+                    <label class="checkbox-row">
+                        <input id="notify-shipping" type="checkbox" checked>
+                        <span>Send Shippo tracking info</span>
+                    </label>
+                    <label class="checkbox-row">
+                        <input id="notify-daily" type="checkbox" checked>
+                        <span>Send daily operations summary</span>
+                    </label>
+                    <button type="submit" class="button button-dark">Save preferences</button>
+                </form>
+                <p class="mini-note" id="notification-status">Email notifications are ready to configure.</p>
+            </div>
+        </section>
+        <section id="portal" class="section-shell content-section portal-section">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">Customer access</p>
+                    <h2>Portal + intelligence</h2>
+                </div>
+            </div>
+            <div class="portal-grid">
+                <div class="panel">
+                    <h3>Sign in or create an account</h3>
+                    <div class="portal-tabs" aria-label="Portal mode selector">
+                        <button type="button" class="portal-tab active" data-portal-mode="login">Login</button>
+                        <button type="button" class="portal-tab" data-portal-mode="signup">Sign up</button>
+                    </div>
+                    <form id="portal-form" class="inline-form">
+                        <label>
+                            Full name
+                            <input id="portal-name" type="text" placeholder="Christine Smith">
+                        </label>
+                        <label>
+                            Email
+                            <input id="portal-email" type="email" placeholder="you@example.com">
+                        </label>
+                        <label>
+                            Password
+                            <input id="portal-password" type="password" placeholder="••••••••">
+                        </label>
+                        <button type="submit" class="button button-dark">Continue</button>
+                    </form>
+                    <p class="mini-note" id="portal-status">Member access is ready for quick login.</p>
+                </div>
+
+                <div class="panel">
+                    <h3>Re-buy marketplace search</h3>
+                    <div class="search-row">
+                        <input id="market-search" type="text" placeholder="Search vinyl, adhesive, or supplies">
+                        <button id="market-search-btn" type="button" class="button button-dark">Search</button>
+                    </div>
+                    <div id="market-results" class="results-panel"></div>
+                </div>
+
+                <div class="panel">
+                    <h3>Payment & shipping setup</h3>
+                    <form id="api-config-form" class="inline-form">
+                        <label>
+                            Stripe API key (test)
+                            <input id="stripe-key" type="password" placeholder="sk_test_...">
+                        </label>
+                        <label>
+                            Shippo API token
+                            <input id="shippo-token" type="password" placeholder="shippo_test_...">
+                        </label>
+                        <label>
+                            UPC/Barcode API key
+                            <input id="barcode-key" type="password" placeholder="your_barcode_api_key">
+                        </label>
+                        <button type="submit" class="button button-dark">Save API keys</button>
+                    </form>
+                    <p class="mini-note" id="api-config-status">API integrations ready for test mode. Production keys can be swapped in.</p>
+                </div>
+
+                <div class="panel wide-panel">
+                    <h3>TGGM master-brain lookup</h3>
+                    <div class="search-row">
+                        <input id="brain-search" type="text" placeholder="Search the knowledge base">
+                        <button id="brain-search-btn" type="button" class="button button-dark">Search</button>
+                    </div>
+                    <div id="brain-results" class="results-panel"></div>
+                </div>
+            </div>
         </section>
     </main>
 
@@ -295,6 +493,14 @@
                 <label>
                     Email
                     <input id="checkout-email" type="email" placeholder="you@example.com" autocomplete="email">
+                </label>
+                <label>
+                    Shipping address
+                    <input id="checkout-address" type="text" placeholder="Street, city, state, ZIP" autocomplete="street-address">
+                </label>
+                <label>
+                    Phone
+                    <input id="checkout-phone" type="tel" placeholder="(615) 555-0100" autocomplete="tel">
                 </label>
             </div>
             <div>

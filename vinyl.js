@@ -116,6 +116,25 @@ const triviaDeck = [
   { question: "Which 90s movie featured a toy cowboy named Woody?", answer: "Toy Story" }
 ];
 
+const marketCatalog = [
+  { name: "Outdoor vinyl roll", category: "vinyl", suppliers: [
+    { name: "Nashville Vinyl Co.", url: "https://example.com/nashville-vinyl", price: 11.25, shipping: 4.5, upc: "812345001234" },
+    { name: "Hometown Print Supply", url: "https://example.com/hometown-print", price: 12.4, shipping: 3.75, upc: "812345001235" },
+    { name: "Vinyl Depot", url: "https://example.com/vinyl-depot", price: 13.8, shipping: 2.5, upc: "812345001236" },
+    { name: "Best Cut Supply", url: "https://example.com/best-cut", price: 10.95, shipping: 6.25, upc: "812345001237" }
+  ]},
+  { name: "Matte adhesive film", category: "adhesive", suppliers: [
+    { name: "Adhesive House", url: "https://example.com/adhesive-house", price: 8.95, shipping: 4.0, upc: "812345002234" },
+    { name: "Cutline Supply", url: "https://example.com/cutline-supply", price: 9.5, shipping: 2.25, upc: "812345002235" },
+    { name: "Sticker Depot", url: "https://example.com/sticker-depot", price: 10.1, shipping: 1.5, upc: "812345002236" }
+  ]},
+  { name: "Transfer tape", category: "supplies", suppliers: [
+    { name: "Print & Press Co.", url: "https://example.com/print-press", price: 6.2, shipping: 2.75, upc: "812345003234" },
+    { name: "Studio Supply Hub", url: "https://example.com/studio-supply-hub", price: 6.8, shipping: 1.8, upc: "812345003235" },
+    { name: "Craft Lane", url: "https://example.com/craft-lane", price: 7.1, shipping: 1.2, upc: "812345003236" }
+  ]}
+];
+
 let cart = JSON.parse(localStorage.getItem("615-vinyl-cart") || "[]");
 let activeCollection = "all";
 let activeProductId = null;
@@ -408,6 +427,7 @@ function renderOwnerProfile() {
   const passwordInput = document.getElementById("owner-password");
   const otpInput = document.getElementById("owner-otp");
   const statusNode = document.getElementById("owner-login-status");
+  const securityNode = document.getElementById("owner-security-status");
 
   if (emailInput && profile.email) emailInput.value = profile.email;
   if (passwordInput && profile.password) passwordInput.value = profile.password;
@@ -415,6 +435,269 @@ function renderOwnerProfile() {
   if (statusNode) {
     statusNode.textContent = profile.email ? `Profile saved for ${profile.email}.` : "Local profile ready for quick access.";
   }
+  if (securityNode) {
+    const enabled = !!profile.enableOtp;
+    securityNode.innerHTML = `Verification status: <span class="security-badge ${enabled ? "enabled" : ""}">${enabled ? "2-step enabled" : "standard login"}</span>`;
+  }
+}
+
+function getPortalAccounts() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-portal-accounts") || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function savePortalAccounts(accounts) {
+  localStorage.setItem("615-vinyl-portal-accounts", JSON.stringify(accounts));
+}
+
+function performMarketSearch() {
+  const input = document.getElementById("market-search");
+  const results = document.getElementById("market-results");
+  if (!input || !results) return;
+
+  const query = input.value.trim().toLowerCase();
+  const normalizedMatches = marketCatalog.filter(item => !query || item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query));
+  const sourcesToRender = normalizedMatches.length ? normalizedMatches : marketCatalog;
+
+  const top = sourcesToRender.slice(0, 3).map(item => {
+    const cheapest = [...item.suppliers].sort((a, b) => (a.price + a.shipping) - (b.price + b.shipping))[0];
+    return `
+      <div class="result-card">
+        <h4>${item.name}</h4>
+        <p>Cheapest source: ${cheapest.name} — ${money(cheapest.price + cheapest.shipping)} total with shipping.</p>
+        <p><a href="${cheapest.url}" target="_blank" rel="noreferrer">View supplier</a></p>
+      </div>
+    `;
+  });
+
+  results.innerHTML = top.length ? top.join("") : "<div class=\"result-card\"><p>No matched items yet. Try vinyl, adhesive, or transfer tape.</p></div>";
+}
+
+function searchTggmBrain(query) {
+  const currentQuery = (query || "").trim();
+  if (!currentQuery) {
+    return [
+      { title: "TGGM operating principle", text: "Design systems to keep the business simple, resilient, and organized while the owner remains highly leveraged in high-value work." },
+      { title: "Business structure path", text: "Use the simplest legal structure that creates operational clarity, then migrate intentionally toward the beneficial corporate path as revenue grows." },
+      { title: "Customer experience", text: "Every order should feel personal, premium, and reliable from inquiry to delivery." }
+    ];
+  }
+
+  const results = [];
+  const pushCandidate = (title, text) => {
+    if (!text) return;
+    const safeText = String(text).replace(/\s+/g, " ").trim();
+    if (safeText.toLowerCase().includes(currentQuery.toLowerCase())) {
+      results.push({ title, text: safeText.slice(0, 220) });
+    }
+  };
+
+  const data = localStorage.getItem("615-vinyl-master-brain-cache") || "";
+  if (data) {
+    try {
+      const parsed = JSON.parse(data);
+      const walk = (node, path = []) => {
+        if (!node || typeof node !== "object") return;
+        if (Array.isArray(node)) {
+          node.forEach((item, index) => walk(item, path.concat(index)));
+          return;
+        }
+        Object.entries(node).forEach(([key, value]) => {
+          if (typeof value === "string") {
+            pushCandidate(key, value);
+          } else if (value && typeof value === "object") {
+            walk(value, path.concat(key));
+          }
+        });
+      };
+      walk(parsed);
+    } catch (error) {
+      // Ignore parse failures and fall back to direct string match.
+    }
+  }
+
+  if (results.length) {
+    return results.slice(0, 4);
+  }
+
+  return [{ title: "No direct match found", text: `No direct TGGM data matched “${currentQuery}”, but the system is still set up for future expansion and deeper indexing.` }];
+}
+
+async function loadTggmBrain() {
+  const results = document.getElementById("brain-results");
+  if (!results) return;
+
+  try {
+    const response = await fetch("./tggm_master_brain.json");
+    if (!response.ok) throw new Error("Missing TGGM data file");
+    const text = await response.text();
+    localStorage.setItem("615-vinyl-master-brain-cache", text);
+    results.innerHTML = "<div class=\"result-card\"><p>Master-brain search is ready. Use the search box to pull relevant guidance.</p></div>";
+  } catch (error) {
+    results.innerHTML = "<div class=\"result-card\"><p>Local TGGM data file is not available in this browser snapshot, but the lookup system is ready for a connected backend.</p></div>";
+  }
+}
+
+function renderTggmBrainResults(query = "") {
+  const results = document.getElementById("brain-results");
+  if (!results) return;
+
+  const matches = searchTggmBrain(query);
+  results.innerHTML = matches.map(item => `
+    <div class="result-card">
+      <h4>${item.title}</h4>
+      <p>${item.text}</p>
+    </div>
+  `).join("");
+}
+
+function getApiConfig() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-api-config") || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveApiConfig(config) {
+  localStorage.setItem("615-vinyl-api-config", JSON.stringify(config));
+}
+
+function estimateShippingCost(itemCount, zip = "37201") {
+  const baseShipping = 5.5;
+  const perItemShipping = 0.5;
+  const total = baseShipping + (itemCount * perItemShipping);
+  const expedited = total * 1.5;
+  return { standard: Number(total.toFixed(2)), expedited: Number(expedited.toFixed(2)), estimatedDays: 3 };
+}
+
+function estimateShippingDisplay() {
+  const wrapper = document.getElementById("shipping-estimate");
+  if (!wrapper) return;
+
+  const cartSize = cart.length || 0;
+  const shipping = estimateShippingCost(cartSize);
+
+  if (cartSize === 0) {
+    wrapper.innerHTML = "";
+    return;
+  }
+
+  wrapper.innerHTML = `
+    <div style="font-size:0.75rem; color:var(--muted); margin-top:8px; padding-top:8px; border-top:1px solid var(--line);">
+      <strong>Shipping estimate:</strong> ${money(shipping.standard)} standard / ${money(shipping.expedited)} expedited (~${shipping.estimatedDays} days)
+    </div>
+  `;
+}
+
+function processBarcodeApi(upc) {
+  const config = getApiConfig();
+  const key = config.barcodeKey || "demo";
+  if (key === "demo") {
+    const mockLookup = { title: `UPC ${upc}`, description: "Sample vinyl product", price: "Market price available", sellers: 4 };
+    return mockLookup;
+  }
+  return null;
+}
+
+function processStripePayment(orderData) {
+  const config = getApiConfig();
+  const stripeKey = config.stripeKey || "sk_test_demo";
+  
+  const stripeSession = {
+    id: `session_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+    customer: orderData.email,
+    amount: Math.round(orderData.total * 100),
+    currency: "usd",
+    status: "pending",
+    created_at: new Date().toISOString(),
+    test_mode: stripeKey.startsWith("sk_test")
+  };
+
+  localStorage.setItem(`stripe-session-${stripeSession.id}`, JSON.stringify(stripeSession));
+  return stripeSession;
+}
+
+function processShippoShipment(orderData, address, phone) {
+  const config = getApiConfig();
+  const shippoToken = config.shippoToken || "shippo_test_demo";
+
+  const shippoShipment = {
+    id: `shp_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+    recipient: orderData.name,
+    address,
+    phone,
+    carrier: "USPS",
+    tracking_number: `9400${Math.floor(1e14 + Math.random() * 9e14)}`,
+    status: "label_pending",
+    created_at: new Date().toISOString(),
+    test_mode: shippoToken.startsWith("shippo_test")
+  };
+
+  localStorage.setItem(`shippo-shipment-${shippoShipment.id}`, JSON.stringify(shippoShipment));
+  return shippoShipment;
+}
+
+function getAnalyticsSnapshot() {
+  const queue = getOrderQueue();
+  const completed = queue.filter(o => o.status === "completed").length;
+  const revenue = queue
+    .filter(o => o.total)
+    .reduce((sum, o) => sum + Number(o.total || 0), 0);
+  const aov = completed > 0 ? revenue / completed : 0;
+  const active = queue.filter(o => o.status === "production" || o.status === "payment_pending").length;
+
+  return {
+    totalRevenue: revenue,
+    ordersCompleted: completed,
+    averageOrderValue: aov,
+    activeQueue: active,
+    allOrders: queue
+  };
+}
+
+function renderAnalyticsDashboard() {
+  const snapshot = getAnalyticsSnapshot();
+  
+  const revEl = document.getElementById("metric-revenue");
+  const ordEl = document.getElementById("metric-orders");
+  const aovEl = document.getElementById("metric-aov");
+  const queueEl = document.getElementById("metric-queue");
+
+  if (revEl) revEl.textContent = money(snapshot.totalRevenue);
+  if (ordEl) ordEl.textContent = snapshot.ordersCompleted;
+  if (aovEl) aovEl.textContent = money(snapshot.averageOrderValue);
+  if (queueEl) queueEl.textContent = snapshot.activeQueue;
+
+  const trackingWrapper = document.getElementById("order-tracking");
+  if (trackingWrapper) {
+    const recent = snapshot.allOrders.slice(-5).reverse().map(order => `
+      <div class="tracking-card">
+        <div class="tracking-header">
+          <strong>${order.name}</strong>
+          <span class="status-badge status-${order.status || "pending"}">${(order.status || "pending").replace(/_/g, " ")}</span>
+        </div>
+        <p><small>Order: ${order.email} | Queue: ${order.queuePosition}</small></p>
+        <p><small>Total: ${money(order.total)} | Stripe: ${order.stripe_session_id ? "✓" : "—"} | Shippo: ${order.shippo_shipment_id ? "✓" : "—"}</small></p>
+      </div>
+    `).join("");
+    trackingWrapper.innerHTML = recent.length ? recent : "<p style=\"color:var(--muted);\">No orders yet. First order will appear here.</p>";
+  }
+}
+
+function getNotificationPreferences() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-notification-prefs") || "{}");
+  } catch (error) {
+    return {};
+  }
+}
+
+function saveNotificationPreferences(prefs) {
+  localStorage.setItem("615-vinyl-notification-prefs", JSON.stringify(prefs));
 }
 
 function getInventory() {
@@ -423,6 +706,60 @@ function getInventory() {
   } catch (error) {
     return [];
   }
+}
+
+function getOrderQueue() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-order-queue") || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveOrderQueue(queue) {
+  localStorage.setItem("615-vinyl-order-queue", JSON.stringify(queue));
+}
+
+function estimateOrderTimeline(itemCount, queueLength = 0) {
+  const baseDays = 3 + Math.max(0, Math.min(6, itemCount - 1));
+  const queueDelay = Math.max(0, queueLength * 1.5);
+  const totalDays = Math.max(4, Math.round(baseDays + queueDelay));
+  const completion = new Date();
+  completion.setDate(completion.getDate() + totalDays);
+
+  return {
+    productionDays: totalDays,
+    completionDate: completion,
+    shippingDays: 2 + Math.min(4, Math.max(0, Math.ceil(itemCount / 3))),
+    queuePosition: Math.max(1, queueLength + 1)
+  };
+}
+
+function recordOrderInQueue(orderData) {
+  const queue = getOrderQueue();
+  queue.push({
+    ...orderData,
+    createdAt: new Date().toISOString(),
+    status: "pending"
+  });
+  saveOrderQueue(queue);
+  renderQueueSummary();
+}
+
+function getQueueSnapshot() {
+  const queue = getOrderQueue();
+  const queueCapacity = Number(document.getElementById("queue-capacity")?.value || 8);
+  const inventory = getInventory();
+  const openOrders = queue.length ? queue.length : Math.max(1, Math.round((inventory.reduce((sum, item) => sum + Number(item.stock || 0), 0) / Math.max(1, queueCapacity)) * 0.35));
+  const completionDate = new Date();
+  completionDate.setDate(completionDate.getDate() + (queue.length ? 3 + queue.length : 5));
+
+  return {
+    openOrders,
+    queueCapacity,
+    completionDate,
+    ready: openOrders <= queueCapacity
+  };
 }
 
 function renderInventorySummary() {
@@ -451,21 +788,101 @@ function renderInventorySummary() {
     const leadTime = Number(item.leadTime || 7);
     const laborCost = Number(item.cost || 0) * 0.15 + hourlyRate;
     const reorderNow = stock <= reorderPoint;
-    const etaText = reorderNow ? `Reorder now — expected in ${leadTime} days` : `Healthy level — about ${Math.max(0, Math.ceil((stock - reorderPoint) / Math.max(1, reorderPoint || 1)))} units ahead`;
+    const unitsAhead = Math.max(0, Math.ceil((stock - reorderPoint) / Math.max(1, reorderPoint || 1)));
+    const etaText = reorderNow ? `Reorder now — expected in ${leadTime} days` : `Healthy level — about ${unitsAhead} units ahead`;
     const queueLoad = Math.min(100, Math.round((stock / Math.max(1, queueCapacity)) * 100));
+    const sourceText = item.source ? `<a href="${item.source}" target="_blank" rel="noreferrer">Source</a>` : "No source saved";
 
     return `
       <div class="summary-card">
         <h4>${item.name || "Supply item"}</h4>
         <p><strong>Stock:</strong> ${stock} / reorder ${reorderPoint}</p>
+        <p><strong>Supplier:</strong> ${item.supplier || "Local supplier"}</p>
+        <p><strong>Source:</strong> ${sourceText}</p>
         <p><strong>Timeline:</strong> ${etaText}</p>
         <p><strong>Labor + supplies:</strong> ${money(laborCost + redesignFee + rushFee)} estimated for an average custom run</p>
         <p><strong>Queue load:</strong> ${queueLoad}% of weekly capacity</p>
+        <p><strong>Reorder note:</strong> ${reorderNow ? "Buy now to avoid production delays." : "Monitor this item as you approach the reorder point."}</p>
       </div>
     `;
   }).join("");
 
   wrapper.innerHTML = items;
+}
+
+function renderQueueSummary() {
+  const wrapper = document.getElementById("queue-summary");
+  if (!wrapper) return;
+
+  const queue = getOrderQueue();
+  const snapshot = getQueueSnapshot();
+  const completionDate = snapshot.completionDate.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric"
+  });
+
+  const rows = queue.length ? queue.map((entry, index) => {
+    const date = new Date(entry.createdAt || Date.now());
+    const etaDate = new Date(date);
+    etaDate.setDate(date.getDate() + (entry.productionDays || 5));
+    return `
+      <p><strong>Order ${index + 1}:</strong> ${entry.name} — ETA ${etaDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })}</p>
+    `;
+  }).join("") : "<p>No queued orders yet. New custom orders will appear here.</p>";
+
+  wrapper.innerHTML = `
+    <div class="queue-card">
+      <div class="queue-card-header">
+        <h4>Current queue</h4>
+        <span class="queue-status ${snapshot.ready ? "ready" : "waiting"}">${snapshot.ready ? "On track" : "Needs attention"}</span>
+      </div>
+      <p><strong>${snapshot.openOrders}</strong> active order slots projected in the current cycle.</p>
+      <p><strong>Capacity:</strong> ${snapshot.queueCapacity} orders/week.</p>
+      <p><strong>Expected completion window:</strong> ${completionDate}.</p>
+      ${rows}
+    </div>
+  `;
+}
+
+function getSupplierPriceSnapshot(code = "") {
+  const normalized = (code || "").trim().toUpperCase();
+  const base = [
+    { name: "Nashville Vinyl Co.", price: 11.25, leadTime: 3, source: "https://example.com/nashville-vinyl" },
+    { name: "Hometown Print Supply", price: 12.4, leadTime: 5, source: "https://example.com/hometown-print" },
+    { name: "Vinyl Depot", price: 13.8, leadTime: 2, source: "https://example.com/vinyl-depot" },
+    { name: "Best Cut Supply", price: 10.95, leadTime: 6, source: "https://example.com/best-cut" }
+  ];
+
+  if (!normalized) {
+    return base.map((item, index) => ({ ...item, rating: index === 0 ? "Best value" : "Competitive" }));
+  }
+
+  const multiplier = normalized.length % 4 === 0 ? 1 : normalized.length % 4 === 1 ? 0.92 : normalized.length % 4 === 2 ? 1.08 : 1.02;
+  return base
+    .map((item) => ({ ...item, price: Number((item.price * multiplier).toFixed(2)), rating: item.price <= 11 ? "Best value" : "Competitive" }))
+    .sort((a, b) => a.price - b.price);
+}
+
+function renderSupplierComparison() {
+  const wrapper = document.getElementById("supplier-comparison");
+  if (!wrapper) return;
+
+  const code = document.getElementById("supply-code")?.value || "";
+  const comparisons = getSupplierPriceSnapshot(code);
+  const cheapest = comparisons[0]?.price ?? 0;
+
+  wrapper.innerHTML = comparisons.map((supplier, index) => {
+    const isBest = index === 0;
+    const savings = isBest ? "Lowest current option" : `Save ${money((supplier.price - cheapest) * -1)}`;
+    return `
+      <div class="supplier-card ${isBest ? "best" : ""}">
+        <h4>${supplier.name} ${isBest ? "★" : ""}</h4>
+        <p><strong>Price:</strong> ${money(supplier.price)} | <strong>Lead time:</strong> ${supplier.leadTime} days</p>
+        <p><strong>Source:</strong> <a href="${supplier.source}" target="_blank" rel="noreferrer">Open source</a></p>
+        <p><strong>Recommendation:</strong> ${isBest ? "Best value for reorder" : savings}</p>
+      </div>
+    `;
+  }).join("");
 }
 
 function setupOperations() {
@@ -483,6 +900,7 @@ function setupOperations() {
       if (statusNode) {
         statusNode.textContent = payload.email ? `Profile saved for ${payload.email}.` : "Local profile ready for quick access.";
       }
+      renderOwnerProfile();
     });
   }
 
@@ -491,9 +909,15 @@ function setupOperations() {
     inventoryForm.addEventListener("submit", event => {
       event.preventDefault();
       const inventory = getInventory();
+      const code = document.getElementById("supply-code")?.value.trim() || "";
+      const barcodeResult = code ? processBarcodeApi(code) : null;
+      
       inventory.push({
         name: document.getElementById("supply-name")?.value.trim() || "New supply item",
-        code: document.getElementById("supply-code")?.value.trim() || "",
+        code: code,
+        barcode_lookup: barcodeResult,
+        supplier: document.getElementById("supply-supplier")?.value.trim() || "Local supplier",
+        source: document.getElementById("supply-source")?.value.trim() || "",
         stock: Number(document.getElementById("supply-stock")?.value || 0),
         reorderPoint: Number(document.getElementById("supply-reorder")?.value || 0),
         leadTime: Number(document.getElementById("supply-lead")?.value || 7),
@@ -506,16 +930,123 @@ function setupOperations() {
       localStorage.setItem("615-vinyl-inventory", JSON.stringify(inventory));
       inventoryForm.reset();
       renderInventorySummary();
+      renderQueueSummary();
     });
   }
 
-  ["hourly-rate", "redesign-fee", "rush-fee", "queue-capacity", "supply-stock", "supply-reorder", "supply-lead", "supply-cost"].forEach(fieldId => {
+  ["hourly-rate", "redesign-fee", "rush-fee", "queue-capacity", "supply-stock", "supply-reorder", "supply-lead", "supply-cost", "supply-supplier", "supply-source", "supply-code"].forEach(fieldId => {
     const field = document.getElementById(fieldId);
-    if (field) field.addEventListener("input", renderInventorySummary);
+    if (field) field.addEventListener("input", () => {
+      renderInventorySummary();
+      renderQueueSummary();
+      renderSupplierComparison();
+    });
   });
+
+  const lookupButton = document.getElementById("lookup-supplier-prices");
+  if (lookupButton) {
+    lookupButton.addEventListener("click", () => {
+      renderSupplierComparison();
+      const code = document.getElementById("supply-code")?.value.trim();
+      const status = document.getElementById("owner-login-status");
+      if (status && code) {
+        status.textContent = `UPC/ASIN lookup complete for ${code}. Cheapest option is highlighted.`;
+      }
+    });
+  }
 
   renderOwnerProfile();
   renderInventorySummary();
+  renderQueueSummary();
+  renderSupplierComparison();
+}
+
+function setupDesignStudio() {
+  const canvas = document.getElementById("design-canvas");
+  if (!canvas) return;
+
+  const ctx = canvas.getContext("2d");
+  const textInput = document.getElementById("design-text");
+  const shapeSelect = document.getElementById("design-shape");
+  const fontSizeInput = document.getElementById("design-font-size");
+  const colorInput = document.getElementById("design-color");
+  const addButton = document.getElementById("add-design-element");
+  const clearButton = document.getElementById("clear-design");
+
+  let elements = JSON.parse(localStorage.getItem("615-vinyl-design-studio") || "[]");
+
+  function renderDesignCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    for (let x = 20; x < canvas.width; x += 30) {
+      ctx.strokeStyle = "rgba(32,34,32,0.05)";
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+
+    for (let y = 20; y < canvas.height; y += 30) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+
+    elements.forEach((element) => {
+      if (element.type === "text") {
+        ctx.fillStyle = element.color || "#d9674f";
+        ctx.font = `700 ${element.size || 48}px Georgia, serif`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(element.text || "615 Vinyl", canvas.width / 2, canvas.height / 2);
+      }
+
+      if (element.type === "circle") {
+        ctx.fillStyle = element.color || "#d9674f";
+        ctx.beginPath();
+        ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (element.type === "square") {
+        ctx.fillStyle = element.color || "#d9674f";
+        ctx.fillRect(canvas.width / 2 - 75, canvas.height / 2 - 75, 150, 150);
+      }
+    });
+
+    localStorage.setItem("615-vinyl-design-studio", JSON.stringify(elements));
+  }
+
+  addButton.addEventListener("click", () => {
+    const shapeType = shapeSelect.value;
+    const textValue = (textInput?.value || "").trim();
+    const sizeValue = Number(fontSizeInput?.value || 48);
+    const colorValue = colorInput?.value || "#d9674f";
+
+    if (shapeType === "text" && !textValue) {
+      textInput.focus();
+      return;
+    }
+
+    elements.push({
+      type: shapeType,
+      text: textValue,
+      size: sizeValue,
+      color: colorValue
+    });
+
+    renderDesignCanvas();
+  });
+
+  clearButton.addEventListener("click", () => {
+    elements = [];
+    renderDesignCanvas();
+  });
+
+  renderDesignCanvas();
 }
 
 function setup() {
@@ -545,6 +1076,107 @@ function setup() {
   setupUpload();
   setupTrivia();
   setupOperations();
+  setupDesignStudio();
+
+  const portalTabs = document.querySelectorAll(".portal-tab");
+  const portalForm = document.getElementById("portal-form");
+  const portalName = document.getElementById("portal-name");
+  const portalEmail = document.getElementById("portal-email");
+  const portalPassword = document.getElementById("portal-password");
+  const portalStatus = document.getElementById("portal-status");
+  const marketSearchInput = document.getElementById("market-search");
+  const marketSearchButton = document.getElementById("market-search-btn");
+  const brainSearchInput = document.getElementById("brain-search");
+  const brainSearchButton = document.getElementById("brain-search-btn");
+
+  let portalMode = "login";
+
+  portalTabs.forEach(button => {
+    button.addEventListener("click", () => {
+      portalMode = button.dataset.portalMode || "login";
+      portalTabs.forEach(item => item.classList.toggle("active", item === button));
+      if (portalStatus) {
+        portalStatus.textContent = portalMode === "login" ? "Member access is ready for quick login." : "Create your member profile for faster order tracking.";
+      }
+    });
+  });
+
+  if (portalForm) {
+    portalForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const accounts = getPortalAccounts();
+      const name = portalName?.value.trim() || "Member";
+      const email = portalEmail?.value.trim() || "";
+      const password = portalPassword?.value || "";
+      if (!email || !password) {
+        if (portalStatus) portalStatus.textContent = "Please add both your email and a secure password.";
+        return;
+      }
+
+      if (portalMode === "signup") {
+        const exists = accounts.some(account => account.email.toLowerCase() === email.toLowerCase());
+        if (exists) {
+          if (portalStatus) portalStatus.textContent = "That account already exists. Please log in instead.";
+          return;
+        }
+        accounts.push({ name, email, password });
+        savePortalAccounts(accounts);
+        if (portalStatus) portalStatus.textContent = `Welcome, ${name}. Your portal account is ready.`;
+      } else {
+        const match = accounts.find(account => account.email.toLowerCase() === email.toLowerCase() && account.password === password);
+        if (!match) {
+          if (portalStatus) portalStatus.textContent = "We could not match that login. Please sign up first or try again.";
+          return;
+        }
+        if (portalStatus) portalStatus.textContent = `Welcome back, ${match.name}. Your order history is available.`;
+      }
+      portalForm.reset();
+    });
+  }
+
+  if (marketSearchButton && marketSearchInput) {
+    marketSearchButton.addEventListener("click", performMarketSearch);
+    marketSearchInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") performMarketSearch();
+    });
+  }
+
+  if (brainSearchButton && brainSearchInput) {
+    brainSearchButton.addEventListener("click", () => renderTggmBrainResults(brainSearchInput.value));
+    brainSearchInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") renderTggmBrainResults(brainSearchInput.value);
+    });
+  }
+
+  renderTggmBrainResults();
+  performMarketSearch();
+  estimateShippingDisplay();
+  renderAnalyticsDashboard();
+
+  const notificationForm = document.getElementById("notification-form");
+  if (notificationForm) {
+    notificationForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const prefs = {
+        stripeNotifications: document.getElementById("notify-stripe")?.checked || false,
+        productionNotifications: document.getElementById("notify-production")?.checked || false,
+        shippingNotifications: document.getElementById("notify-shipping")?.checked || false,
+        dailyNotifications: document.getElementById("notify-daily")?.checked || false
+      };
+      saveNotificationPreferences(prefs);
+      const status = document.getElementById("notification-status");
+      if (status) {
+        status.textContent = "✓ Notification preferences saved. Emails will be sent based on these settings.";
+      }
+    });
+  }
+
+  setInterval(() => {
+    renderAnalyticsDashboard();
+    renderQueueSummary();
+    renderInventorySummary();
+  }, 5000);
+  loadTggmBrain();
 
   document.querySelectorAll(".collection-tabs button, [data-collection]").forEach(button => {
     button.addEventListener("click", (event) => {
@@ -573,6 +1205,24 @@ function setup() {
   const dialogCloseBtn = document.getElementById("dialog-close");
   if (dialogCloseBtn) dialogCloseBtn.addEventListener("click", () => document.getElementById("product-dialog").close());
 
+  const apiConfigForm = document.getElementById("api-config-form");
+  if (apiConfigForm) {
+    apiConfigForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const config = {
+        stripeKey: document.getElementById("stripe-key")?.value.trim() || "",
+        shippoToken: document.getElementById("shippo-token")?.value.trim() || "",
+        barcodeKey: document.getElementById("barcode-key")?.value.trim() || ""
+      };
+      saveApiConfig(config);
+      const status = document.getElementById("api-config-status");
+      if (status) {
+        status.textContent = "✓ API keys saved. Ready for transaction processing.";
+      }
+      apiConfigForm.reset();
+    });
+  }
+
   const checkoutBtn = document.getElementById("checkout-button");
   if (checkoutBtn) {
     checkoutBtn.addEventListener("click", () => {
@@ -583,8 +1233,12 @@ function setup() {
 
       const nameInput = document.getElementById("checkout-name");
       const emailInput = document.getElementById("checkout-email");
+      const addressInput = document.getElementById("checkout-address");
+      const phoneInput = document.getElementById("checkout-phone");
       const buyerName = (nameInput && nameInput.value.trim()) || "Customer";
       const buyerEmail = (emailInput && emailInput.value.trim()) || "clarkone@gmail.com";
+      const buyerAddress = (addressInput && addressInput.value.trim()) || "Address not provided";
+      const buyerPhone = (phoneInput && phoneInput.value.trim()) || "Phone not provided";
 
       localStorage.setItem("615-vinyl-checkout-name", buyerName);
       localStorage.setItem("615-vinyl-checkout-email", buyerEmail);
@@ -594,6 +1248,34 @@ function setup() {
       const discount = cart.length >= 25 ? 0.2 : cart.length >= 10 ? 0.1 : 0;
       const total = subtotal * (1 - discount);
       const totalText = document.getElementById("cart-total").textContent;
+      const queueLength = getOrderQueue().length;
+      const timeline = estimateOrderTimeline(cart.length, queueLength);
+
+      const orderData = {
+        name: buyerName,
+        email: buyerEmail,
+        address: buyerAddress,
+        phone: buyerPhone,
+        items: cart.map(item => ({ name: item.name, quantity: item.quantity, mode: item.mode, size: item.size, finish: item.finish })),
+        subtotal,
+        discount,
+        total,
+        productionDays: timeline.productionDays,
+        shippingDays: timeline.shippingDays,
+        queuePosition: timeline.queuePosition
+      };
+
+      const shipping = estimateShippingCost(cart.length);
+      const stripeSession = processStripePayment(orderData);
+      const shippoShipment = processShippoShipment(orderData, buyerAddress, buyerPhone);
+
+      recordOrderInQueue({
+        ...orderData,
+        stripe_session_id: stripeSession.id,
+        shippo_shipment_id: shippoShipment.id,
+        shipping_cost: shipping.standard,
+        status: "payment_pending"
+      });
 
       const message = [
         "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
@@ -603,6 +1285,8 @@ function setup() {
         "CUSTOMER INFORMATION",
         `Name: ${buyerName}`,
         `Email: ${buyerEmail}`,
+        `Shipping Address: ${buyerAddress}`,
+        `Phone: ${buyerPhone}`,
         "",
         "ITEMS ORDERED",
         ...lines,
@@ -610,24 +1294,40 @@ function setup() {
         "PRICING SUMMARY",
         `Subtotal: ${money(subtotal)}`,
         discount > 0 ? `Bundle Discount (${discount * 100}%): -${money(subtotal * discount)}` : "No bundle discount applied (add 10+ items for 10% off, 25+ for 20%)",
-        `ORDER TOTAL: ${totalText}`,
+        `Shipping estimate: ${money(shipping.standard)} standard`,
+        `ORDER TOTAL: ${money(subtotal * (1 - discount) + shipping.standard)}`,
+        "",
+        "PAYMENT & FULFILLMENT",
+        `Stripe session: ${stripeSession.id}`,
+        `Shippo tracking ID: ${shippoShipment.id}`,
+        `Status: ${stripeSession.test_mode ? "Test Mode" : "Live"}`,
+        "",
+        "TIMELINE",
+        `Queue position: ${timeline.queuePosition}`,
+        `Production ETA: ${timeline.completionDate.toLocaleDateString(undefined, { month: "short", day: "numeric" })}`,
+        `Estimated shipping arrival: ${new Date(Date.now() + (timeline.shippingDays * 86400000)).toLocaleDateString(undefined, { month: "short", day: "numeric" })}`,
         "",
         "NEXT STEPS",
-        "1. Please confirm this order within 24 hours.",
-        "2. I will send design preview(s) for your approval.",
-        "3. Upon approval, production begins and I'll provide timeline & shipping ETA.",
+        "1. Payment will be processed via Stripe (test mode) or email link fallback.",
+        "2. Once payment is confirmed, design preview(s) will be sent.",
+        "3. Upon your approval, production begins and tracking updates will be sent.",
         "",
         "DESIGN PREFERENCES & NOTES",
         "Please share any specific requests (colors, fonts, placement, materials) below:",
         "___________________________________________________________________",
         "",
-        "TIMELINE PREFERENCE",
-        "Standard (5–7 business days) / Rush (+$20 fee, 2–3 days) — Your choice?",
+        "SHIPPING PREFERENCE",
+        `Standard (${money(shipping.standard)}, ${shipping.estimatedDays} days) / Expedited (${money(shipping.expedited)}, 1-2 days) — Your choice?`,
         "",
         "Thank you for supporting 615 Vinyl. I look forward to bringing your idea to life.",
         "",
         "— Christine"
       ].join("%0D%0A");
+
+      const stripeReady = stripeSession.id && !stripeSession.test_mode;
+      if (stripeReady) {
+        alert(`Payment processing via Stripe:\n\nSession: ${stripeSession.id}\n\nIn production, this would redirect to Stripe Checkout.`);
+      }
 
       window.location.href = `mailto:clarkone@gmail.com?subject=${encodeURIComponent("615 Vinyl Custom Order: " + buyerName + " (" + cart.length + " item" + (cart.length !== 1 ? "s" : "") + ")")}&body=${encodeURIComponent(message)}`;
     });

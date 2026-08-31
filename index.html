@@ -313,25 +313,41 @@
                             <input id="design-text" type="text" placeholder="e.g. Good Vibes">
                         </label>
                         <label>
-                            Font size
-                            <input id="design-font-size" type="number" min="18" max="120" step="2" value="48">
-                        </label>
-                        <label>
                             Shape
                             <select id="design-shape">
                                 <option value="text">Text</option>
                                 <option value="circle">Circle</option>
                                 <option value="square">Square</option>
+                                <option value="triangle">Triangle</option>
+                                <option value="star">Star</option>
+                                <option value="line">Line</option>
                             </select>
                         </label>
+                        <div class="form-row">
+                            <label>
+                                Size
+                                <input id="design-font-size" type="number" min="12" max="160" step="2" value="48">
+                            </label>
+                            <label>
+                                Rotation
+                                <input id="design-rotation" type="number" min="0" max="359" step="5" value="0">
+                            </label>
+                        </div>
                         <label>
                             Accent color
                             <input id="design-color" type="color" value="#d9674f">
                         </label>
                         <div class="option-row">
                             <button id="add-design-element" type="button" class="button button-dark">Add to canvas</button>
-                            <button id="clear-design" type="button" class="button button-light">Clear</button>
+                            <button id="delete-design-element" type="button" class="button button-light">Delete selected</button>
                         </div>
+                        <div class="option-row">
+                            <button id="layer-back" type="button" class="button button-light">Send back</button>
+                            <button id="layer-front" type="button" class="button button-light">Bring front</button>
+                            <button id="clear-design" type="button" class="button button-light">Clear all</button>
+                        </div>
+                        <a id="design-download" class="text-link" download="615-vinyl-design.png">Download design PNG <span>&darr;</span></a>
+                        <p class="form-note" id="design-status">Click a shape to select it, drag to reposition, and use the size/rotation controls to fine-tune it.</p>
                     </form>
                 </div>
                 <div class="panel wide-panel">

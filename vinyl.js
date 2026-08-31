@@ -973,12 +973,98 @@ function setupDesignStudio() {
   const ctx = canvas.getContext("2d");
   const textInput = document.getElementById("design-text");
   const shapeSelect = document.getElementById("design-shape");
-  const fontSizeInput = document.getElementById("design-font-size");
+  const sizeInput = document.getElementById("design-font-size");
+  const rotationInput = document.getElementById("design-rotation");
   const colorInput = document.getElementById("design-color");
   const addButton = document.getElementById("add-design-element");
+  const deleteButton = document.getElementById("delete-design-element");
   const clearButton = document.getElementById("clear-design");
+  const layerBackButton = document.getElementById("layer-back");
+  const layerFrontButton = document.getElementById("layer-front");
+  const downloadLink = document.getElementById("design-download");
+  const statusNode = document.getElementById("design-status");
 
   let elements = JSON.parse(localStorage.getItem("615-vinyl-design-studio") || "[]");
+  elements = elements.map((element, index) => ({
+    id: element.id || index + 1,
+    type: element.type || "text",
+    text: element.text || "",
+    size: element.size || 48,
+    rotation: element.rotation || 0,
+    color: element.color || "#d9674f",
+    x: typeof element.x === "number" ? element.x : canvas.width / 2,
+    y: typeof element.y === "number" ? element.y : canvas.height / 2
+  }));
+  let nextId = elements.reduce((max, el) => Math.max(max, el.id || 0), 0) + 1;
+  let selectedId = null;
+  let dragState = null;
+
+  function getElementById(id) {
+    return elements.find(el => el.id === id);
+  }
+
+  // Approximate half-size used for both hit-testing and the selection outline.
+  function boundsFor(element) {
+    const size = element.size || 48;
+    if (element.type === "text") {
+      const width = Math.max(40, ((element.text || "615 Vinyl").length || 1) * size * 0.32);
+      return { halfWidth: width / 2, halfHeight: size * 0.6 };
+    }
+    if (element.type === "line") return { halfWidth: size, halfHeight: 8 };
+    return { halfWidth: size, halfHeight: size };
+  }
+
+  function drawShape(element) {
+    const { x, y, rotation = 0, color } = element;
+    const size = element.size || 48;
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate((rotation * Math.PI) / 180);
+    ctx.fillStyle = color || "#d9674f";
+    ctx.strokeStyle = color || "#d9674f";
+
+    if (element.type === "text") {
+      ctx.font = `700 ${size}px Georgia, serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(element.text || "615 Vinyl", 0, 0);
+    } else if (element.type === "circle") {
+      ctx.beginPath();
+      ctx.arc(0, 0, size, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (element.type === "square") {
+      ctx.fillRect(-size, -size, size * 2, size * 2);
+    } else if (element.type === "triangle") {
+      ctx.beginPath();
+      ctx.moveTo(0, -size);
+      ctx.lineTo(size, size);
+      ctx.lineTo(-size, size);
+      ctx.closePath();
+      ctx.fill();
+    } else if (element.type === "star") {
+      const spikes = 5;
+      const outer = size;
+      const inner = size * 0.5;
+      ctx.beginPath();
+      for (let i = 0; i < spikes * 2; i++) {
+        const radius = i % 2 === 0 ? outer : inner;
+        const angle = (Math.PI / spikes) * i - Math.PI / 2;
+        const px = Math.cos(angle) * radius;
+        const py = Math.sin(angle) * radius;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.fill();
+    } else if (element.type === "line") {
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(-size, 0);
+      ctx.lineTo(size, 0);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
 
   function renderDesignCanvas() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1000,35 +1086,90 @@ function setupDesignStudio() {
       ctx.stroke();
     }
 
-    elements.forEach((element) => {
-      if (element.type === "text") {
-        ctx.fillStyle = element.color || "#d9674f";
-        ctx.font = `700 ${element.size || 48}px Georgia, serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(element.text || "615 Vinyl", canvas.width / 2, canvas.height / 2);
-      }
+    elements.forEach(drawShape);
 
-      if (element.type === "circle") {
-        ctx.fillStyle = element.color || "#d9674f";
-        ctx.beginPath();
-        ctx.arc(canvas.width / 2, canvas.height / 2, 80, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      if (element.type === "square") {
-        ctx.fillStyle = element.color || "#d9674f";
-        ctx.fillRect(canvas.width / 2 - 75, canvas.height / 2 - 75, 150, 150);
-      }
-    });
+    const selected = getElementById(selectedId);
+    if (selected) {
+      const { halfWidth, halfHeight } = boundsFor(selected);
+      ctx.save();
+      ctx.translate(selected.x, selected.y);
+      ctx.rotate(((selected.rotation || 0) * Math.PI) / 180);
+      ctx.strokeStyle = "#202220";
+      ctx.setLineDash([6, 5]);
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(-halfWidth - 8, -halfHeight - 8, (halfWidth + 8) * 2, (halfHeight + 8) * 2);
+      ctx.restore();
+    }
 
     localStorage.setItem("615-vinyl-design-studio", JSON.stringify(elements));
+    if (downloadLink) downloadLink.href = canvas.toDataURL("image/png");
   }
+
+  function hitTest(px, py) {
+    for (let i = elements.length - 1; i >= 0; i--) {
+      const element = elements[i];
+      const { halfWidth, halfHeight } = boundsFor(element);
+      const angle = -((element.rotation || 0) * Math.PI) / 180;
+      const dx = px - element.x;
+      const dy = py - element.y;
+      const localX = dx * Math.cos(angle) - dy * Math.sin(angle);
+      const localY = dx * Math.sin(angle) + dy * Math.cos(angle);
+      if (Math.abs(localX) <= halfWidth && Math.abs(localY) <= halfHeight) return element;
+    }
+    return null;
+  }
+
+  function canvasPoint(event) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY
+    };
+  }
+
+  function syncControlsToSelection() {
+    const selected = getElementById(selectedId);
+    if (!selected) return;
+    if (sizeInput) sizeInput.value = selected.size || 48;
+    if (rotationInput) rotationInput.value = selected.rotation || 0;
+    if (colorInput) colorInput.value = selected.color || "#d9674f";
+    if (shapeSelect) shapeSelect.value = selected.type;
+    if (textInput && selected.type === "text") textInput.value = selected.text || "";
+  }
+
+  canvas.addEventListener("pointerdown", event => {
+    const point = canvasPoint(event);
+    const hit = hitTest(point.x, point.y);
+    selectedId = hit ? hit.id : null;
+    if (hit) {
+      dragState = { offsetX: point.x - hit.x, offsetY: point.y - hit.y };
+      syncControlsToSelection();
+      canvas.setPointerCapture(event.pointerId);
+    }
+    renderDesignCanvas();
+  });
+
+  canvas.addEventListener("pointermove", event => {
+    if (!dragState || selectedId === null) return;
+    const point = canvasPoint(event);
+    const selected = getElementById(selectedId);
+    if (!selected) return;
+    selected.x = Math.min(canvas.width, Math.max(0, point.x - dragState.offsetX));
+    selected.y = Math.min(canvas.height, Math.max(0, point.y - dragState.offsetY));
+    renderDesignCanvas();
+  });
+
+  ["pointerup", "pointercancel", "pointerleave"].forEach(evt => {
+    canvas.addEventListener(evt, () => { dragState = null; });
+  });
 
   addButton.addEventListener("click", () => {
     const shapeType = shapeSelect.value;
     const textValue = (textInput?.value || "").trim();
-    const sizeValue = Number(fontSizeInput?.value || 48);
+    const sizeValue = Number(sizeInput?.value || 48);
+    const rotationValue = Number(rotationInput?.value || 0);
     const colorValue = colorInput?.value || "#d9674f";
 
     if (shapeType === "text" && !textValue) {
@@ -1036,19 +1177,86 @@ function setupDesignStudio() {
       return;
     }
 
-    elements.push({
+    const cascade = (elements.length % 6) * 18;
+    const newElement = {
+      id: nextId++,
       type: shapeType,
       text: textValue,
       size: sizeValue,
-      color: colorValue
-    });
+      rotation: rotationValue,
+      color: colorValue,
+      x: canvas.width / 2 - 60 + cascade,
+      y: canvas.height / 2 - 60 + cascade
+    };
 
+    elements.push(newElement);
+    selectedId = newElement.id;
+    if (statusNode) statusNode.textContent = "Shape added. Drag it into place, or select another element to keep building.";
+    renderDesignCanvas();
+  });
+
+  [sizeInput, rotationInput, colorInput].forEach(input => {
+    if (!input) return;
+    input.addEventListener("input", () => {
+      const selected = getElementById(selectedId);
+      if (!selected) return;
+      if (input === sizeInput) selected.size = Number(sizeInput.value || 48);
+      if (input === rotationInput) selected.rotation = Number(rotationInput.value || 0);
+      if (input === colorInput) selected.color = colorInput.value;
+      renderDesignCanvas();
+    });
+  });
+
+  if (textInput) {
+    textInput.addEventListener("input", () => {
+      const selected = getElementById(selectedId);
+      if (selected && selected.type === "text") {
+        selected.text = textInput.value;
+        renderDesignCanvas();
+      }
+    });
+  }
+
+  deleteButton.addEventListener("click", () => {
+    if (selectedId === null) {
+      if (statusNode) statusNode.textContent = "Select a shape on the canvas first, then delete it.";
+      return;
+    }
+    elements = elements.filter(el => el.id !== selectedId);
+    selectedId = null;
+    renderDesignCanvas();
+  });
+
+  layerBackButton.addEventListener("click", () => {
+    const selected = getElementById(selectedId);
+    if (!selected) return;
+    elements = [selected, ...elements.filter(el => el.id !== selectedId)];
+    renderDesignCanvas();
+  });
+
+  layerFrontButton.addEventListener("click", () => {
+    const selected = getElementById(selectedId);
+    if (!selected) return;
+    elements = [...elements.filter(el => el.id !== selectedId), selected];
     renderDesignCanvas();
   });
 
   clearButton.addEventListener("click", () => {
     elements = [];
+    selectedId = null;
+    if (rotationInput) rotationInput.value = 0;
     renderDesignCanvas();
+  });
+
+  document.addEventListener("keydown", event => {
+    const tag = document.activeElement?.tagName;
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+    if ((event.key === "Delete" || event.key === "Backspace") && selectedId !== null) {
+      event.preventDefault();
+      elements = elements.filter(el => el.id !== selectedId);
+      selectedId = null;
+      renderDesignCanvas();
+    }
   });
 
   renderDesignCanvas();

@@ -394,12 +394,157 @@ function setupTrivia() {
   });
 }
 
+function getOwnerProfile() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-owner-profile") || "null") || {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function renderOwnerProfile() {
+  const profile = getOwnerProfile();
+  const emailInput = document.getElementById("owner-email");
+  const passwordInput = document.getElementById("owner-password");
+  const otpInput = document.getElementById("owner-otp");
+  const statusNode = document.getElementById("owner-login-status");
+
+  if (emailInput && profile.email) emailInput.value = profile.email;
+  if (passwordInput && profile.password) passwordInput.value = profile.password;
+  if (otpInput && typeof profile.enableOtp === "boolean") otpInput.checked = profile.enableOtp;
+  if (statusNode) {
+    statusNode.textContent = profile.email ? `Profile saved for ${profile.email}.` : "Local profile ready for quick access.";
+  }
+}
+
+function getInventory() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-inventory") || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function renderInventorySummary() {
+  const wrapper = document.getElementById("inventory-summary");
+  if (!wrapper) return;
+
+  const inventory = getInventory();
+  const hourlyRate = Number(document.getElementById("hourly-rate")?.value || 25);
+  const redesignFee = Number(document.getElementById("redesign-fee")?.value || 15);
+  const rushFee = Number(document.getElementById("rush-fee")?.value || 20);
+  const queueCapacity = Number(document.getElementById("queue-capacity")?.value || 8);
+
+  if (!inventory.length) {
+    wrapper.innerHTML = `
+      <div class="summary-card">
+        <h4>No supply items yet</h4>
+        <p>Add a supply or material to forecast reorder timing and labor planning.</p>
+      </div>
+    `;
+    return;
+  }
+
+  const items = inventory.map(item => {
+    const stock = Number(item.stock || 0);
+    const reorderPoint = Number(item.reorderPoint || 0);
+    const leadTime = Number(item.leadTime || 7);
+    const laborCost = Number(item.cost || 0) * 0.15 + hourlyRate;
+    const reorderNow = stock <= reorderPoint;
+    const etaText = reorderNow ? `Reorder now — expected in ${leadTime} days` : `Healthy level — about ${Math.max(0, Math.ceil((stock - reorderPoint) / Math.max(1, reorderPoint || 1)))} units ahead`;
+    const queueLoad = Math.min(100, Math.round((stock / Math.max(1, queueCapacity)) * 100));
+
+    return `
+      <div class="summary-card">
+        <h4>${item.name || "Supply item"}</h4>
+        <p><strong>Stock:</strong> ${stock} / reorder ${reorderPoint}</p>
+        <p><strong>Timeline:</strong> ${etaText}</p>
+        <p><strong>Labor + supplies:</strong> ${money(laborCost + redesignFee + rushFee)} estimated for an average custom run</p>
+        <p><strong>Queue load:</strong> ${queueLoad}% of weekly capacity</p>
+      </div>
+    `;
+  }).join("");
+
+  wrapper.innerHTML = items;
+}
+
+function setupOperations() {
+  const ownerForm = document.getElementById("owner-login-form");
+  if (ownerForm) {
+    ownerForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const payload = {
+        email: document.getElementById("owner-email")?.value.trim() || "",
+        password: document.getElementById("owner-password")?.value || "",
+        enableOtp: document.getElementById("owner-otp")?.checked || false
+      };
+      localStorage.setItem("615-vinyl-owner-profile", JSON.stringify(payload));
+      const statusNode = document.getElementById("owner-login-status");
+      if (statusNode) {
+        statusNode.textContent = payload.email ? `Profile saved for ${payload.email}.` : "Local profile ready for quick access.";
+      }
+    });
+  }
+
+  const inventoryForm = document.getElementById("inventory-form");
+  if (inventoryForm) {
+    inventoryForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const inventory = getInventory();
+      inventory.push({
+        name: document.getElementById("supply-name")?.value.trim() || "New supply item",
+        code: document.getElementById("supply-code")?.value.trim() || "",
+        stock: Number(document.getElementById("supply-stock")?.value || 0),
+        reorderPoint: Number(document.getElementById("supply-reorder")?.value || 0),
+        leadTime: Number(document.getElementById("supply-lead")?.value || 7),
+        cost: Number(document.getElementById("supply-cost")?.value || 0),
+        hourlyRate: Number(document.getElementById("hourly-rate")?.value || 25),
+        redesignFee: Number(document.getElementById("redesign-fee")?.value || 15),
+        rushFee: Number(document.getElementById("rush-fee")?.value || 20),
+        queueCapacity: Number(document.getElementById("queue-capacity")?.value || 8)
+      });
+      localStorage.setItem("615-vinyl-inventory", JSON.stringify(inventory));
+      inventoryForm.reset();
+      renderInventorySummary();
+    });
+  }
+
+  ["hourly-rate", "redesign-fee", "rush-fee", "queue-capacity", "supply-stock", "supply-reorder", "supply-lead", "supply-cost"].forEach(fieldId => {
+    const field = document.getElementById(fieldId);
+    if (field) field.addEventListener("input", renderInventorySummary);
+  });
+
+  renderOwnerProfile();
+  renderInventorySummary();
+}
+
 function setup() {
+  const homeLink = document.getElementById("brand-home");
+  if (homeLink) {
+    homeLink.addEventListener("click", event => {
+      event.preventDefault();
+      const homeSection = document.getElementById("home");
+      if (homeSection) {
+        homeSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      history.replaceState(null, "", "#home");
+    });
+  }
+
+  const savedScroll = Number(sessionStorage.getItem("615-vinyl-scroll") || "0");
+  if (savedScroll > 0) {
+    window.scrollTo({ top: savedScroll, behavior: "auto" });
+  }
+  window.addEventListener("scroll", () => {
+    sessionStorage.setItem("615-vinyl-scroll", String(window.scrollY));
+  }, { passive: true });
+
   renderProducts();
   renderEvents();
   renderCart();
   setupUpload();
   setupTrivia();
+  setupOperations();
 
   document.querySelectorAll(".collection-tabs button, [data-collection]").forEach(button => {
     button.addEventListener("click", (event) => {
@@ -444,14 +589,24 @@ function setup() {
       localStorage.setItem("615-vinyl-checkout-name", buyerName);
       localStorage.setItem("615-vinyl-checkout-email", buyerEmail);
 
-      const lines = cart.map(item => `${item.name} (${item.mode} / ${item.size} / ${item.finish}) x${item.quantity} = ${money(item.price * item.quantity)}`).join("%0D%0A");
+      const lines = cart.map(item => `${item.name} (${item.mode} / ${item.size} / ${item.finish}) x${item.quantity} = ${money(item.price * item.quantity)}`);
       const total = document.getElementById("cart-total").textContent;
-      const message = `Hello Christine,%0D%0A%0D%0A` +
-        `I would like to order the following from 615 Vinyl:%0D%0A${lines}%0D%0A%0D%0A` +
-        `Customer: ${buyerName}%0D%0A` +
-        `Email: ${buyerEmail}%0D%0A` +
-        `Order total: ${total}%0D%0A%0D%0A` +
-        `Please confirm the design and a final total before production.`;
+      const message = [
+        "Hello Christine,",
+        "",
+        "I would like to place an order through 615 Vinyl.",
+        "",
+        "Order summary:",
+        ...lines,
+        "",
+        `Customer: ${buyerName}`,
+        `Email: ${buyerEmail}`,
+        `Order total: ${total}`,
+        "",
+        "Please confirm the design, timeline, and final total before production.",
+        "",
+        "If a design proof is needed, I would be happy to review it before production begins."
+      ].join("%0D%0A");
 
       window.location.href = `mailto:clarkone@gmail.com?subject=${encodeURIComponent("615 Vinyl order request")}&body=${encodeURIComponent(message)}`;
     });

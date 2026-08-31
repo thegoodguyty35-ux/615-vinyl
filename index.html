@@ -13,7 +13,7 @@
 </head>
 <body>
     <header class="site-header">
-        <a class="brand" href="#home" aria-label="615 Vinyl home">
+        <a id="brand-home" class="brand" href="#home" aria-label="615 Vinyl home">
             <span class="brand-mark">615</span>
             <span><strong>Vinyl</strong></span>
         </a>
@@ -178,6 +178,98 @@
             <div class="qr-frame">
                 <img id="qr-code" alt="QR code linking to the 615 Vinyl homepage">
                 <small>615VINYL.COM</small>
+            </div>
+        </section>
+
+        <section id="operations" class="section-shell content-section operations-section">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">Business operations</p>
+                    <h2>Production planner</h2>
+                </div>
+            </div>
+            <div class="ops-grid">
+                <div class="panel">
+                    <h3>Owner access</h3>
+                    <form id="owner-login-form" class="inline-form">
+                        <label>
+                            Business email
+                            <input id="owner-email" type="email" placeholder="you@example.com">
+                        </label>
+                        <label>
+                            Password
+                            <input id="owner-password" type="password" placeholder="••••••••">
+                        </label>
+                        <label class="checkbox-row">
+                            <input id="owner-otp" type="checkbox">
+                            <span>Enable 2-step verification</span>
+                        </label>
+                        <button type="submit" class="button button-dark">Save profile</button>
+                    </form>
+                    <p class="mini-note" id="owner-login-status">Local profile ready for quick access.</p>
+                </div>
+
+                <div class="panel wide-panel">
+                    <h3>Supply planner</h3>
+                    <form id="inventory-form" class="inventory-form">
+                        <div class="form-row">
+                            <label>
+                                Item name
+                                <input id="supply-name" type="text" placeholder="e.g. Outdoor vinyl roll">
+                            </label>
+                            <label>
+                                UPC / ASIN
+                                <input id="supply-code" type="text" placeholder="UPC or ASIN">
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label>
+                                On hand
+                                <input id="supply-stock" type="number" min="0" value="0">
+                            </label>
+                            <label>
+                                Reorder point
+                                <input id="supply-reorder" type="number" min="0" value="0">
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label>
+                                Lead time (days)
+                                <input id="supply-lead" type="number" min="1" value="7">
+                            </label>
+                            <label>
+                                Cost per unit
+                                <input id="supply-cost" type="number" min="0" step="0.01" value="0">
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label>
+                                Base hourly labor rate
+                                <input id="hourly-rate" type="number" min="0" step="0.01" value="25">
+                            </label>
+                            <label>
+                                Redesign fee
+                                <input id="redesign-fee" type="number" min="0" step="0.01" value="15">
+                            </label>
+                        </div>
+                        <div class="form-row">
+                            <label>
+                                Rush fee
+                                <input id="rush-fee" type="number" min="0" step="0.01" value="20">
+                            </label>
+                            <label>
+                                Queue capacity
+                                <input id="queue-capacity" type="number" min="1" value="8">
+                            </label>
+                        </div>
+                        <button type="submit" class="button button-dark">Add supply item</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="ops-summary panel">
+                <h3>Estimated timeline and buying triggers</h3>
+                <div id="inventory-summary" class="inventory-summary"></div>
             </div>
         </section>
     </main>

@@ -285,6 +285,35 @@ img { max-width: 100%; display: block; }
 }
 .option-row button.selected { border-color:var(--coral); background:#f8dfd7; box-shadow:0 8px 18px rgba(217,103,79,.12); }
 .detail-copy .button { width:100%; }
+
+.operations-section { padding-top:70px; }
+.ops-grid {
+  display:grid; grid-template-columns: minmax(220px, 360px) minmax(0, 1fr); gap:24px; margin-top:30px;
+}
+.panel {
+  background: rgba(255,255,255,.64); border:1px solid var(--line); border-radius:18px; padding:24px; box-shadow: 0 12px 24px rgba(32,34,32,.04);
+}
+.panel h3 { margin-top:0; font-size:1.35rem; }
+.inline-form, .inventory-form { display:grid; gap:16px; }
+.inline-form label, .inventory-form label {
+  display:block; font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.08em;
+}
+.inline-form input, .inventory-form input {
+  width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--line); border-radius:10px; background:#fff; color:var(--ink);
+}
+.checkbox-row { display:flex; align-items:center; gap:10px; text-transform:none !important; letter-spacing:normal !important; font-weight:600 !important; }
+.checkbox-row input { width:auto; margin:0; }
+.mini-note { margin-top:12px; color:var(--muted); font-size:.76rem; }
+.form-row { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:14px; }
+.inventory-summary {
+  display:grid; gap:14px; margin-top:16px;
+}
+.summary-card {
+  border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:rgba(255,255,255,.5);
+}
+.summary-card h4 { margin:0 0 8px; font-size:1rem; }
+.summary-card p { margin:0; color:var(--muted); font-size:.78rem; }
+.summary-card strong { color:var(--ink); }
 @media (max-width:800px) {
   .site-header { padding:15px 20px; }
   .icon-button { display:block; order:2; }
@@ -298,6 +327,7 @@ img { max-width: 100%; display: block; }
   .hero { padding-top:50px; }
   .hero-art { min-height:330px; }
   .product-grid { grid-template-columns:repeat(2,1fr); }
+  .ops-grid, .form-row { grid-template-columns:1fr; }
   .section-heading, .qr-section { align-items:start; flex-direction:column; }
   .site-footer { flex-direction:column; }
   .event-card { grid-template-columns:72px 1fr; }

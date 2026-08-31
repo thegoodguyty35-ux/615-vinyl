@@ -798,6 +798,9 @@ function renderInventorySummary() {
     const etaText = reorderNow ? `Reorder now — expected in ${leadTime} days` : `Healthy level — about ${unitsAhead} units ahead`;
     const queueLoad = Math.min(100, Math.round((stock / Math.max(1, queueCapacity)) * 100));
     const sourceText = item.source ? `<a href="${item.source}" target="_blank" rel="noreferrer">Source</a>` : "No source saved";
+    const barcodeText = item.barcode_lookup
+      ? `${item.barcode_lookup.title} — ${item.barcode_lookup.description} (${item.barcode_lookup.sellers} sellers found)`
+      : "";
 
     return `
       <div class="summary-card">
@@ -805,6 +808,7 @@ function renderInventorySummary() {
         <p><strong>Stock:</strong> ${stock} / reorder ${reorderPoint}</p>
         <p><strong>Supplier:</strong> ${item.supplier || "Local supplier"}</p>
         <p><strong>Source:</strong> ${sourceText}</p>
+        ${barcodeText ? `<p><strong>UPC lookup:</strong> ${barcodeText}</p>` : ""}
         <p><strong>Timeline:</strong> ${etaText}</p>
         <p><strong>Labor + supplies:</strong> ${money(laborCost + redesignFee + rushFee)} estimated for an average custom run</p>
         <p><strong>Queue load:</strong> ${queueLoad}% of weekly capacity</p>

@@ -303,6 +303,7 @@ function renderCart() {
   if (checkoutEmail && !checkoutEmail.value) {
     checkoutEmail.value = localStorage.getItem("615-vinyl-checkout-email") || "";
   }
+  estimateShippingDisplay();
 }
 
 function openCart() {
@@ -859,7 +860,9 @@ function getSupplierPriceSnapshot(code = "") {
   ];
 
   if (!normalized) {
-    return base.map((item, index) => ({ ...item, rating: index === 0 ? "Best value" : "Competitive" }));
+    return [...base]
+      .sort((a, b) => a.price - b.price)
+      .map((item, index) => ({ ...item, rating: index === 0 ? "Best value" : "Competitive" }));
   }
 
   const multiplier = normalized.length % 4 === 0 ? 1 : normalized.length % 4 === 1 ? 0.92 : normalized.length % 4 === 2 ? 1.08 : 1.02;
@@ -878,7 +881,7 @@ function renderSupplierComparison() {
 
   wrapper.innerHTML = comparisons.map((supplier, index) => {
     const isBest = index === 0;
-    const savings = isBest ? "Lowest current option" : `Save ${money((supplier.price - cheapest) * -1)}`;
+    const savings = isBest ? "Lowest current option" : `${money(supplier.price - cheapest)} more than the best price`;
     return `
       <div class="supplier-card ${isBest ? "best" : ""}">
         <h4>${supplier.name} ${isBest ? "★" : ""}</h4>

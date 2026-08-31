@@ -589,26 +589,47 @@ function setup() {
       localStorage.setItem("615-vinyl-checkout-name", buyerName);
       localStorage.setItem("615-vinyl-checkout-email", buyerEmail);
 
-      const lines = cart.map(item => `${item.name} (${item.mode} / ${item.size} / ${item.finish}) x${item.quantity} = ${money(item.price * item.quantity)}`);
-      const total = document.getElementById("cart-total").textContent;
+      const lines = cart.map(item => `  • ${item.name} (${item.mode} / ${item.size} / ${item.finish})\n    Qty: ${item.quantity} | Price per unit: ${money(item.price)} | Line total: ${money(item.price * item.quantity)}`);
+      const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      const discount = cart.length >= 25 ? 0.2 : cart.length >= 10 ? 0.1 : 0;
+      const total = subtotal * (1 - discount);
+      const totalText = document.getElementById("cart-total").textContent;
+
       const message = [
-        "Hello Christine,",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+        "615 VINYL CUSTOM ORDER REQUEST",
+        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
         "",
-        "I would like to place an order through 615 Vinyl.",
+        "CUSTOMER INFORMATION",
+        `Name: ${buyerName}`,
+        `Email: ${buyerEmail}`,
         "",
-        "Order summary:",
+        "ITEMS ORDERED",
         ...lines,
         "",
-        `Customer: ${buyerName}`,
-        `Email: ${buyerEmail}`,
-        `Order total: ${total}`,
+        "PRICING SUMMARY",
+        `Subtotal: ${money(subtotal)}`,
+        discount > 0 ? `Bundle Discount (${discount * 100}%): -${money(subtotal * discount)}` : "No bundle discount applied (add 10+ items for 10% off, 25+ for 20%)",
+        `ORDER TOTAL: ${totalText}`,
         "",
-        "Please confirm the design, timeline, and final total before production.",
+        "NEXT STEPS",
+        "1. Please confirm this order within 24 hours.",
+        "2. I will send design preview(s) for your approval.",
+        "3. Upon approval, production begins and I'll provide timeline & shipping ETA.",
         "",
-        "If a design proof is needed, I would be happy to review it before production begins."
+        "DESIGN PREFERENCES & NOTES",
+        "Please share any specific requests (colors, fonts, placement, materials) below:",
+        "___________________________________________________________________",
+        "",
+        "TIMELINE PREFERENCE",
+        "Standard (5–7 business days) / Rush (+$20 fee, 2–3 days) — Your choice?",
+        "",
+        "Thank you for supporting 615 Vinyl. I look forward to bringing your idea to life.",
+        "",
+        "— Christine"
       ].join("%0D%0A");
 
-      window.location.href = `mailto:clarkone@gmail.com?subject=${encodeURIComponent("615 Vinyl order request")}&body=${encodeURIComponent(message)}`;
+      window.location.href = `mailto:clarkone@gmail.com?subject=${encodeURIComponent("615 Vinyl Custom Order: " + buyerName + " (" + cart.length + " item" + (cart.length !== 1 ? "s" : "") + ")")}&body=${encodeURIComponent(message)}`;
     });
   }
 

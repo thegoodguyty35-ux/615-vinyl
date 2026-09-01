@@ -241,7 +241,7 @@
                 </form>
             </div>
 
-            <div class="panel wide-panel knit-owner-panel">
+            <div class="panel wide-panel knit-owner-panel owner-only" hidden>
                 <h3>Shop owner: add a product photo</h3>
                 <p class="mini-note">Saved locally in this browser so Christine can showcase real photos above. Not a public upload — for her use while managing the shop.</p>
                 <form id="knit-photo-form" class="inline-form">
@@ -275,7 +275,7 @@
             </div>
         </section>
 
-        <section id="operations" class="section-shell content-section operations-section">
+        <section id="operations" class="section-shell content-section operations-section owner-only" hidden>
             <div class="section-heading">
                 <div>
                     <p class="kicker">Business operations</p>
@@ -450,7 +450,7 @@
             </div>
         </section>
 
-        <section id="analytics" class="section-shell content-section analytics-section">
+        <section id="analytics" class="section-shell content-section analytics-section owner-only" hidden>
             <div class="section-heading">
                 <div>
                     <p class="kicker">Business insights</p>
@@ -539,9 +539,16 @@
                         <button type="submit" class="button button-dark">Continue</button>
                     </form>
                     <p class="mini-note" id="portal-status">Member access is ready for quick login.</p>
+                    <button id="portal-logout" type="button" class="button button-light" hidden>Log out</button>
+                    <div id="portal-account" class="account-panel" hidden>
+                        <h4>My account</h4>
+                        <p id="portal-account-summary"></p>
+                        <p class="mini-note">Your order history</p>
+                        <div id="portal-order-history" class="results-panel"></div>
+                    </div>
                 </div>
 
-                <div class="panel">
+                <div class="panel owner-only" hidden>
                     <h3>Re-buy marketplace search</h3>
                     <div class="search-row">
                         <input id="market-search" type="text" placeholder="Search vinyl, adhesive, or supplies">
@@ -550,7 +557,7 @@
                     <div id="market-results" class="results-panel"></div>
                 </div>
 
-                <div class="panel">
+                <div class="panel owner-only" hidden>
                     <h3>Payment & shipping setup</h3>
                     <form id="api-config-form" class="inline-form">
                         <label>
@@ -570,7 +577,7 @@
                     <p class="mini-note" id="api-config-status">API integrations ready for test mode. Production keys can be swapped in.</p>
                 </div>
 
-                <div class="panel wide-panel">
+                <div class="panel wide-panel owner-only" hidden>
                     <h3>TGGM master-brain lookup</h3>
                     <div class="search-row">
                         <input id="brain-search" type="text" placeholder="Search the knowledge base">

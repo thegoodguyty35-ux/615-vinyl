@@ -304,6 +304,12 @@ img { max-width: 100%; display: block; }
 .checkbox-row { display:flex; align-items:center; gap:10px; text-transform:none !important; letter-spacing:normal !important; font-weight:600 !important; }
 .checkbox-row input { width:auto; margin:0; }
 .mini-note { margin-top:12px; color:var(--muted); font-size:.76rem; }
+.account-panel {
+  margin-top:16px; padding-top:16px; border-top:1px solid var(--line);
+}
+.account-panel h4 { margin:0 0 8px; font-size:1rem; }
+.account-panel > p { margin:0 0 10px; color:var(--muted); font-size:.8rem; }
+#portal-logout { margin-top:12px; }
 .security-badge {
   display:inline-block; padding:4px 8px; border-radius:999px; font-size:.68rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase;
   background:rgba(116,127,117,.12); color:var(--muted); border:1px solid var(--line);

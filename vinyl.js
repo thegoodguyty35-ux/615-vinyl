@@ -459,6 +459,71 @@ function savePortalAccounts(accounts) {
   localStorage.setItem("615-vinyl-portal-accounts", JSON.stringify(accounts));
 }
 
+// Owner-only sections (operations, analytics, API keys, supplier search, TGGM lookup,
+// Knittin' photo manager) are only revealed to these two accounts once logged in.
+// This is a visibility convenience, not real security — anyone with dev tools can
+// still read the underlying data client-side, since there is no backend.
+const OWNER_EMAILS = ["clarkone@gmail.com", "clark031999@gmail.com"];
+
+function isOwnerEmail(email) {
+  return OWNER_EMAILS.includes((email || "").trim().toLowerCase());
+}
+
+function getCurrentSession() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-current-session") || "null");
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveCurrentSession(session) {
+  localStorage.setItem("615-vinyl-current-session", JSON.stringify(session));
+}
+
+function clearCurrentSession() {
+  localStorage.removeItem("615-vinyl-current-session");
+}
+
+function applyOwnerVisibility() {
+  const session = getCurrentSession();
+  const isOwner = !!(session && isOwnerEmail(session.email));
+  document.querySelectorAll(".owner-only").forEach(el => { el.hidden = !isOwner; });
+  return isOwner;
+}
+
+function renderAccountPanel() {
+  const accountPanel = document.getElementById("portal-account");
+  const summaryNode = document.getElementById("portal-account-summary");
+  const historyNode = document.getElementById("portal-order-history");
+  const logoutButton = document.getElementById("portal-logout");
+  const session = getCurrentSession();
+
+  if (!accountPanel || !summaryNode || !historyNode) return;
+
+  if (!session) {
+    accountPanel.hidden = true;
+    if (logoutButton) logoutButton.hidden = true;
+    return;
+  }
+
+  accountPanel.hidden = false;
+  if (logoutButton) logoutButton.hidden = false;
+  summaryNode.textContent = isOwnerEmail(session.email)
+    ? `Signed in as ${session.name} (${session.email}) — shop owner access enabled.`
+    : `Signed in as ${session.name} (${session.email}).`;
+
+  const myOrders = getOrderQueue().filter(order => (order.email || "").toLowerCase() === session.email.toLowerCase());
+  historyNode.innerHTML = myOrders.length
+    ? myOrders.slice(-10).reverse().map(order => `
+        <div class="result-card">
+          <h4>${order.name}</h4>
+          <p>Status: ${(order.status || "pending").replace(/_/g, " ")} • Total: ${money(order.total || 0)}</p>
+        </div>
+      `).join("")
+    : "<p class=\"muted\">No orders yet under this email.</p>";
+}
+
 function performMarketSearch() {
   const input = document.getElementById("market-search");
   const results = document.getElementById("market-results");
@@ -1478,6 +1543,9 @@ function setupKnitting() {
 }
 
 function setup() {
+  applyOwnerVisibility();
+  renderAccountPanel();
+
   const homeLink = document.getElementById("brand-home");
   if (homeLink) {
     homeLink.addEventListener("click", event => {
@@ -1550,6 +1618,9 @@ function setup() {
         }
         accounts.push({ name, email, password });
         savePortalAccounts(accounts);
+        saveCurrentSession({ name, email });
+        applyOwnerVisibility();
+        renderAccountPanel();
         if (portalStatus) portalStatus.textContent = `Welcome, ${name}. Your portal account is ready.`;
       } else {
         const match = accounts.find(account => account.email.toLowerCase() === email.toLowerCase() && account.password === password);
@@ -1557,9 +1628,22 @@ function setup() {
           if (portalStatus) portalStatus.textContent = "We could not match that login. Please sign up first or try again.";
           return;
         }
+        saveCurrentSession({ name: match.name, email: match.email });
+        applyOwnerVisibility();
+        renderAccountPanel();
         if (portalStatus) portalStatus.textContent = `Welcome back, ${match.name}. Your order history is available.`;
       }
       portalForm.reset();
+    });
+  }
+
+  const portalLogoutButton = document.getElementById("portal-logout");
+  if (portalLogoutButton) {
+    portalLogoutButton.addEventListener("click", () => {
+      clearCurrentSession();
+      applyOwnerVisibility();
+      renderAccountPanel();
+      if (portalStatus) portalStatus.textContent = "You have been logged out. Log in again anytime to see your orders.";
     });
   }
 

@@ -181,6 +181,44 @@ These are new entries ready to integrate into TGGM's 16-category knowledge base.
 
 ---
 
+## Category 9 (continued): Knittin' with My Kitten – Sister Shop Model
+
+```json
+{
+  "category": "9_financial_engine",
+  "subcategory": "sister_shop_product_diversification",
+  "entity_name": "Knittin' with My Kitten (crochet shop, sister brand to 615 Vinyl)",
+  "framework": "Learn Anything 7-Primes",
+  "date_added": "2026-08-31",
+
+  "business_model": {
+    "identity": "Handmade crochet goods shop operating as a second product line under the same owner (Christine), sharing storefront infrastructure with 615 Vinyl but with its own brand identity and product catalog.",
+    "product_catalog": [
+      { "category": "bags", "example": "Crochet Birkin-style bag", "price_range": "$55-$85" },
+      { "category": "food", "example": "Crochet pop tart (amigurumi)", "price_range": "$10-$18" },
+      { "category": "planters", "example": "Crochet flower pot + faux plant", "price_range": "$18-$28" },
+      { "category": "blankets", "example": "Crochet throw blanket", "price_range": "$65-$120" },
+      { "category": "purses", "example": "Crochet purse", "price_range": "$30-$50" },
+      { "category": "airpods", "example": "Crochet AirPods case cover", "price_range": "$8-$16" },
+      { "category": "wallets", "example": "Crochet wallet", "price_range": "$14-$22" },
+      { "category": "flowers", "example": "Crochet flower / rose bouquet", "price_range": "$18-$32" },
+      { "category": "potions", "example": "Crochet potion bottle (Smite-mana-inspired)", "price_range": "$12-$20" },
+      { "category": "custom", "example": "Personal request, any category", "price_range": "quote-based" }
+    ],
+    "shared_infrastructure_with_615_vinyl": [
+      "Same cart, checkout, Stripe/Shippo pipeline, and production queue system",
+      "Same owner operations dashboard (inventory, analytics, notifications)",
+      "Separate product catalog + separate customer-facing section (#knitting) so the brand identity stays distinct",
+      "Owner-managed photo catalog: Christine uploads real product photos per category directly in-browser (localStorage-backed, no external CMS needed)"
+    ],
+    "revenue_diversification_rationale": "Two product lines under one storefront reduces reliance on a single craft/material (vinyl vs. yarn), smooths seasonal demand (decals sell more at outdoor markets, crochet sells more in cooler months/gift seasons), and lets one operations system serve two brands without duplicating infrastructure cost.",
+    "scaling_path": "Same Tier 2 → Tier 3 cooperative path as 615 Vinyl: could recruit a second crochet-focused maker once volume exceeds Christine's solo capacity, using the same sub-maker/profit-split model already designed for 615 Vinyl."
+  }
+}
+```
+
+---
+
 ## Category 12: Corporate Structure – LLC → C-Corp → Cooperative Evolution
 
 ```json

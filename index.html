@@ -21,6 +21,7 @@
         <nav id="site-nav" class="site-nav" aria-label="Main navigation">
             <a href="#collections">Collections</a>
             <a href="#custom">Custom Studio</a>
+            <a href="#knitting">Knittin' with My Kitten</a>
             <a href="#events">Events</a>
             <a href="#trivia">Trivia</a>
             <button class="cart-button" id="cart-open" type="button" title="Open cart">Cart <span id="cart-count">0</span></button>
@@ -178,6 +179,99 @@
             <div class="qr-frame">
                 <img id="qr-code" alt="QR code linking to the 615 Vinyl homepage">
                 <small>615VINYL.COM</small>
+            </div>
+        </section>
+
+        <section id="knitting" class="section-shell content-section knitting-section">
+            <div class="section-heading">
+                <div>
+                    <p class="kicker">A cozy sister shop</p>
+                    <h2>Knittin' with My Kitten</h2>
+                </div>
+                <p class="muted">Handmade crochet treasures, stitched one loop at a time.<br>Personal requests always welcome.</p>
+            </div>
+            <div class="knit-tabs" role="tablist" aria-label="Crochet categories">
+                <button class="knit-tab active" data-knit-category="all" role="tab">All treasures</button>
+                <button class="knit-tab" data-knit-category="bags" role="tab">Bags</button>
+                <button class="knit-tab" data-knit-category="food" role="tab">Amigurumi Food</button>
+                <button class="knit-tab" data-knit-category="planters" role="tab">Planters</button>
+                <button class="knit-tab" data-knit-category="blankets" role="tab">Blankets</button>
+                <button class="knit-tab" data-knit-category="purses" role="tab">Purses</button>
+                <button class="knit-tab" data-knit-category="airpods" role="tab">AirPods Cases</button>
+                <button class="knit-tab" data-knit-category="wallets" role="tab">Wallets</button>
+                <button class="knit-tab" data-knit-category="flowers" role="tab">Flowers &amp; Roses</button>
+                <button class="knit-tab" data-knit-category="potions" role="tab">Potion Bottles</button>
+            </div>
+            <div id="knit-grid" class="product-grid" aria-live="polite"></div>
+
+            <div class="custom-form knit-request-panel">
+                <div class="form-top">
+                    <span class="step-number">02</span>
+                    <div>
+                        <strong>Request a custom crochet piece</strong>
+                        <small>Have your own idea? Tell Christine what you're dreaming up.</small>
+                    </div>
+                </div>
+                <form id="knit-custom-form">
+                    <label>Category
+                        <select id="knit-custom-category">
+                            <option value="bags">Bag</option>
+                            <option value="food">Amigurumi food</option>
+                            <option value="planters">Planter</option>
+                            <option value="blankets">Blanket</option>
+                            <option value="purses">Purse</option>
+                            <option value="airpods">AirPods case</option>
+                            <option value="wallets">Wallet</option>
+                            <option value="flowers">Flower / rose</option>
+                            <option value="potions">Potion bottle</option>
+                            <option value="other">Something else</option>
+                        </select>
+                    </label>
+                    <label>Your idea
+                        <input id="knit-custom-text" type="text" placeholder="e.g. Mint green potion bottle keychain">
+                    </label>
+                    <label>Preferred colors
+                        <input id="knit-custom-color" type="text" placeholder="e.g. sage green, cream, dusty rose">
+                    </label>
+                    <label>Upload a reference photo (optional)
+                        <input id="knit-custom-upload" type="file" accept="image/png,image/jpeg,image/webp">
+                    </label>
+                    <button class="button button-dark" type="submit">Request a quote <span>&rarr;</span></button>
+                    <p class="form-note" id="knit-custom-status" role="status">We'll reply with a quote before anything is stitched.</p>
+                </form>
+            </div>
+
+            <div class="panel wide-panel knit-owner-panel">
+                <h3>Shop owner: add a product photo</h3>
+                <p class="mini-note">Saved locally in this browser so Christine can showcase real photos above. Not a public upload — for her use while managing the shop.</p>
+                <form id="knit-photo-form" class="inline-form">
+                    <div class="form-row">
+                        <label>Category
+                            <select id="knit-photo-category">
+                                <option value="bags">Bag</option>
+                                <option value="food">Amigurumi food</option>
+                                <option value="planters">Planter</option>
+                                <option value="blankets">Blanket</option>
+                                <option value="purses">Purse</option>
+                                <option value="airpods">AirPods case</option>
+                                <option value="wallets">Wallet</option>
+                                <option value="flowers">Flower / rose</option>
+                                <option value="potions">Potion bottle</option>
+                            </select>
+                        </label>
+                        <label>Price
+                            <input id="knit-photo-price" type="number" min="0" step="0.01" value="20">
+                        </label>
+                    </div>
+                    <label>Product name
+                        <input id="knit-photo-name" type="text" placeholder="e.g. Sunset Rose Bouquet">
+                    </label>
+                    <label>Photo
+                        <input id="knit-photo-file" type="file" accept="image/png,image/jpeg,image/webp">
+                    </label>
+                    <button id="knit-photo-save" type="button" class="button button-dark">Save photo to shop</button>
+                </form>
+                <div id="knit-photo-manager" class="results-panel"></div>
             </div>
         </section>
 

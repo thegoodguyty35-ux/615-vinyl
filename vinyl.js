@@ -1269,6 +1269,214 @@ function setupDesignStudio() {
   renderDesignCanvas();
 }
 
+const crochetCategories = {
+  bags: { label: "Bag", icon: "👜" },
+  food: { label: "Amigurumi food", icon: "🥯" },
+  planters: { label: "Planter", icon: "🪴" },
+  blankets: { label: "Blanket", icon: "🧶" },
+  purses: { label: "Purse", icon: "👛" },
+  airpods: { label: "AirPods case", icon: "🎧" },
+  wallets: { label: "Wallet", icon: "💳" },
+  flowers: { label: "Flower / rose", icon: "🌹" },
+  potions: { label: "Potion bottle", icon: "🧪" }
+};
+
+const crochetProducts = [
+  { id: "knit-birkin", category: "bags", name: "Crochet Birkin-Style Bag", price: 65, description: "A structured handbag inspired by the icon, stitched sturdy enough for everyday carry." },
+  { id: "knit-poptart", category: "food", name: "Crochet Pop Tart", price: 14, description: "A frosted, sprinkled amigurumi pop tart — soft, squishy, and always in season." },
+  { id: "knit-planter", category: "planters", name: "Crochet Flower Pot + Faux Plant", price: 22, description: "A cozy crocheted planter cover with a little faux plant tucked inside." },
+  { id: "knit-blanket", category: "blankets", name: "Crochet Throw Blanket", price: 85, description: "A warm, chunky throw blanket in your choice of colorway." },
+  { id: "knit-purse", category: "purses", name: "Crochet Purse", price: 40, description: "A lightweight everyday purse with a sturdy lining and clean stitch work." },
+  { id: "knit-airpods", category: "airpods", name: "Crochet AirPods Case Cover", price: 12, description: "A snug little cover to keep your AirPods case cute and protected." },
+  { id: "knit-wallet", category: "wallets", name: "Crochet Wallet", price: 18, description: "A compact card-and-cash wallet, crocheted tight and neat." },
+  { id: "knit-flowers", category: "flowers", name: "Crochet Flower Bouquet (Roses & Blooms)", price: 24, description: "A never-wilting bouquet of crocheted roses and blooms." },
+  { id: "knit-potion", category: "potions", name: "Crochet Potion Bottle (Mana-Inspired)", price: 16, description: "A glowing-blue mana-style potion bottle, cozy cousin to your favorite game pickup." }
+];
+
+function getCrochetPhotos() {
+  try {
+    return JSON.parse(localStorage.getItem("615-vinyl-crochet-photos") || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveCrochetPhotos(photos) {
+  localStorage.setItem("615-vinyl-crochet-photos", JSON.stringify(photos));
+}
+
+let activeKnitCategory = "all";
+
+function addKnitItemToCart(item) {
+  const key = `knit-${item.id}`;
+  const existing = cart.find(cartItem => cartItem.key === key);
+  if (existing) existing.quantity += 1;
+  else {
+    cart.push({
+      key,
+      id: item.id,
+      name: item.name,
+      mode: "crochet",
+      size: crochetCategories[item.category]?.label || item.category,
+      finish: "made to order",
+      price: item.price,
+      quantity: 1
+    });
+  }
+  persistCart();
+  openCart();
+}
+
+function renderKnitGrid() {
+  const wrapper = document.getElementById("knit-grid");
+  if (!wrapper) return;
+
+  const photos = getCrochetPhotos();
+  const seedCards = crochetProducts
+    .filter(item => activeKnitCategory === "all" || item.category === activeKnitCategory)
+    .map(item => `
+      <article class="product-card knit-card" data-knit-id="${item.id}" data-knit-source="seed" tabindex="0">
+        <div class="product-art"><span>${crochetCategories[item.category]?.icon || "🧶"}</span></div>
+        <div class="product-meta">
+          <h3>${item.name}</h3>
+          <p>${item.description}</p>
+          <strong class="price">${money(item.price)}</strong>
+          <button class="button button-dark knit-add" type="button" data-knit-id="${item.id}" data-knit-source="seed">Add to cart</button>
+        </div>
+      </article>
+    `);
+
+  const photoCards = photos
+    .filter(photo => activeKnitCategory === "all" || photo.category === activeKnitCategory)
+    .map(photo => `
+      <article class="product-card knit-card" data-knit-id="${photo.id}" data-knit-source="photo" tabindex="0">
+        <div class="product-art"><img src="${photo.imageDataUrl}" alt="${photo.name}" style="width:100%;height:100%;object-fit:cover;"></div>
+        <div class="product-meta">
+          <h3>${photo.name}</h3>
+          <p>${crochetCategories[photo.category]?.label || photo.category}</p>
+          <strong class="price">${money(photo.price)}</strong>
+          <button class="button button-dark knit-add" type="button" data-knit-id="${photo.id}" data-knit-source="photo">Add to cart</button>
+        </div>
+      </article>
+    `);
+
+  const allCards = [...photoCards, ...seedCards].join("");
+  wrapper.innerHTML = allCards || "<p class=\"muted\">No pieces in this category yet — check back soon or send a custom request below.</p>";
+
+  wrapper.querySelectorAll(".knit-add").forEach(button => {
+    button.addEventListener("click", () => {
+      const id = button.dataset.knitId;
+      const source = button.dataset.knitSource;
+      const item = source === "photo"
+        ? photos.find(photo => photo.id === id)
+        : crochetProducts.find(product => product.id === id);
+      if (item) addKnitItemToCart(item);
+    });
+  });
+}
+
+function renderKnitPhotoManager() {
+  const wrapper = document.getElementById("knit-photo-manager");
+  if (!wrapper) return;
+
+  const photos = getCrochetPhotos();
+  wrapper.innerHTML = photos.length
+    ? photos.map(photo => `
+        <div class="result-card knit-photo-row">
+          <img src="${photo.imageDataUrl}" alt="${photo.name}" style="width:56px;height:56px;object-fit:cover;border-radius:8px;">
+          <div>
+            <h4>${photo.name}</h4>
+            <p>${crochetCategories[photo.category]?.label || photo.category} • ${money(photo.price)}</p>
+          </div>
+          <button type="button" class="button button-light" data-remove-photo="${photo.id}">Remove</button>
+        </div>
+      `).join("")
+    : "<p class=\"muted\">No saved photos yet. Add your first product photo above.</p>";
+
+  wrapper.querySelectorAll("[data-remove-photo]").forEach(button => {
+    button.addEventListener("click", () => {
+      const remaining = getCrochetPhotos().filter(photo => photo.id !== button.dataset.removePhoto);
+      saveCrochetPhotos(remaining);
+      renderKnitPhotoManager();
+      renderKnitGrid();
+    });
+  });
+}
+
+function setupKnitting() {
+  const grid = document.getElementById("knit-grid");
+  if (!grid) return;
+
+  document.querySelectorAll(".knit-tab").forEach(button => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll(".knit-tab").forEach(tab => tab.classList.remove("active"));
+      button.classList.add("active");
+      activeKnitCategory = button.dataset.knitCategory || "all";
+      renderKnitGrid();
+    });
+  });
+
+  const photoForm = document.getElementById("knit-photo-form");
+  const photoFile = document.getElementById("knit-photo-file");
+  if (photoForm) {
+    document.getElementById("knit-photo-save").addEventListener("click", () => {
+      const category = document.getElementById("knit-photo-category").value;
+      const name = document.getElementById("knit-photo-name").value.trim();
+      const price = Number(document.getElementById("knit-photo-price").value || 0);
+      const file = photoFile.files[0];
+
+      if (!name || !file) {
+        alert("Add a product name and choose a photo before saving.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const photos = getCrochetPhotos();
+        photos.push({
+          id: `photo-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+          category,
+          name,
+          price,
+          imageDataUrl: reader.result,
+          createdAt: new Date().toISOString()
+        });
+        saveCrochetPhotos(photos);
+        photoForm.reset();
+        renderKnitPhotoManager();
+        renderKnitGrid();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const knitCustomForm = document.getElementById("knit-custom-form");
+  if (knitCustomForm) {
+    knitCustomForm.addEventListener("submit", event => {
+      event.preventDefault();
+      const category = document.getElementById("knit-custom-category").value;
+      const idea = document.getElementById("knit-custom-text").value.trim() || "an idea to be discussed";
+      const color = document.getElementById("knit-custom-color").value.trim() || "no preference given";
+      const label = crochetCategories[category]?.label || "custom piece";
+
+      const body = [
+        "KNITTIN' WITH MY KITTEN — CUSTOM REQUEST",
+        "",
+        `Category: ${label}`,
+        `Idea: ${idea}`,
+        `Preferred colors: ${color}`
+      ].join("\n");
+
+      window.location.href = `mailto:clarkone@gmail.com?subject=${encodeURIComponent("Knittin' with My Kitten custom request")}&body=${encodeURIComponent(body)}`;
+      const status = document.getElementById("knit-custom-status");
+      if (status) status.textContent = "Opening your email to send the request — we'll reply with a quote before anything is stitched.";
+    });
+  }
+
+  renderKnitGrid();
+  renderKnitPhotoManager();
+}
+
 function setup() {
   const homeLink = document.getElementById("brand-home");
   if (homeLink) {
@@ -1297,6 +1505,7 @@ function setup() {
   setupTrivia();
   setupOperations();
   setupDesignStudio();
+  setupKnitting();
 
   const portalTabs = document.querySelectorAll(".portal-tab");
   const portalForm = document.getElementById("portal-form");
